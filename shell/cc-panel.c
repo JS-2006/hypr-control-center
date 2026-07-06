@@ -221,7 +221,7 @@ cc_panel_class_init (CcPanelClass *klass)
     gtk_widget_class_install_action (widget_class, "navigation.push", "s",
                                      (GtkWidgetActionActivateFunc) navigation_push_cb);
 
-    gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Settings/gtk/cc-panel.ui");
+    gtk_widget_class_set_template_from_resource (widget_class, "/org/hypr/Settings/gtk/cc-panel.ui");
 
     gtk_widget_class_bind_template_child_private (widget_class, CcPanel, navigation);
 }
