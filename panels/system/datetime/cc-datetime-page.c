@@ -50,7 +50,7 @@
 #define DEFAULT_TZ "Europe/London"
 #define GETTEXT_PACKAGE_TIMEZONES GETTEXT_PACKAGE "-timezones"
 
-#define DATETIME_PERMISSION "org.gnome.controlcenter.datetime.configure"
+#define DATETIME_PERMISSION "org.hypr.controlcenter.datetime.configure"
 #define DATETIME_TZ_PERMISSION "org.freedesktop.timedate1.set-timezone"
 #define LOCATION_SETTINGS "org.gnome.system.location"
 #define LOCATION_ENABLED "enabled"

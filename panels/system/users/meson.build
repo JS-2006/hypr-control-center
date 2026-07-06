@@ -55,7 +55,7 @@ install_data(
   install_dir: image_dir
 )
 
-polkit = 'org.gnome.controlcenter.user-accounts.policy'
+polkit = 'org.hypr.controlcenter.user-accounts.policy'
 i18n.merge_file(
   input: polkit + '.in',
   output: polkit,

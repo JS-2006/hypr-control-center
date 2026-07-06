@@ -6,7 +6,7 @@
     <file preprocess="xml-stripblanks">cc-power-profile-row.ui</file>
     <file preprocess="xml-stripblanks">cc-power-profile-info-row.ui</file>
   </gresource>
-  <gresource prefix="/org/gnome/Settings">
+  <gresource prefix="/org/hypr/Settings">
     <file preprocess="xml-stripblanks">icons/scalable/actions/power-saving-symbolic.svg</file>
   </gresource>
 </gresources>

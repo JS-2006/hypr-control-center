@@ -4,13 +4,13 @@
 <node>
 
   <!--
-      org.gnome.Settings.GlobalShortcutsProvider:
+      org.hypr.Settings.GlobalShortcutsProvider:
       @short_description: Global shortcuts portal permissions UI
 
       Provides a UI for the GlobalShortcuts portal, stores preferences, and
       notifies the compositor of changes.
   -->
-  <interface name="org.gnome.Settings.GlobalShortcutsProvider">
+  <interface name="org.hypr.Settings.GlobalShortcutsProvider">
     <!--
         BindShortcuts:
         @app_id: Application ID

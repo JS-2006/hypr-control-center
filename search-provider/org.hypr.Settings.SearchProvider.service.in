@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.hypr.Settings.SearchProvider
+Exec=@libexecdir@/hypr-control-center-search-provider

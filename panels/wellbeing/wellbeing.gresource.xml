@@ -12,7 +12,7 @@
     <file preprocess="xml-stripblanks">cc-screen-time-statistics-row.ui</file>
     <file preprocess="xml-stripblanks">cc-wellbeing-panel.ui</file>
   </gresource>
-  <gresource prefix="/org/gnome/Settings/icons/scalable/actions">
+  <gresource prefix="/org/hypr/Settings/icons/scalable/actions">
     <file alias="org.gnome.Settings-screen-time-symbolic.svg" preprocess="xml-stripblanks">icons/scalable/org.gnome.Settings-screen-time-symbolic.svg</file>
   </gresource>
 </gresources>

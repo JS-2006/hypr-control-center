@@ -100,7 +100,7 @@ on_permission_acquired (GObject *source_object, GAsyncResult *res, gpointer user
     g_autoptr(GError) error = NULL;
 
     if (!g_permission_acquire_finish (permission, res, &error)) {
-        g_warning ("Cannot acquire '%s' permission: %s", "org.gnome.controlcenter.remote-login-helper", error->message);
+        g_warning ("Cannot acquire '%s' permission: %s", "org.hypr.controlcenter.remote-login-helper", error->message);
     } else {
         if (g_permission_get_allowed (permission)) {
             if (adw_switch_row_get_active (callback_data->widget))
@@ -111,7 +111,7 @@ on_permission_acquired (GObject *source_object, GAsyncResult *res, gpointer user
             /* Switch state should match service state */
             return;
         } else {
-            g_warning ("Permission: %s not granted", "org.gnome.controlcenter.remote-login-helper");
+            g_warning ("Permission: %s not granted", "org.hypr.controlcenter.remote-login-helper");
         }
     }
 
@@ -137,11 +137,11 @@ cc_secure_shell_set_enabled (GCancellable *cancellable, AdwSwitchRow *widget)
     callback_data->widget = widget;
     callback_data->cancellable = cancellable;
 
-    permission = polkit_permission_new_sync ("org.gnome.controlcenter.remote-login-helper", NULL, NULL, &error);
+    permission = polkit_permission_new_sync ("org.hypr.controlcenter.remote-login-helper", NULL, NULL, &error);
 
     if (permission != NULL) {
         g_permission_acquire_async (permission, callback_data->cancellable, on_permission_acquired, callback_data);
     } else {
-        g_warning ("Cannot create '%s' permission: %s", "org.gnome.controlcenter.remote-login-helper", error->message);
+        g_warning ("Cannot create '%s' permission: %s", "org.hypr.controlcenter.remote-login-helper", error->message);
     }
 }

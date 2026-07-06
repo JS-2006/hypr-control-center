@@ -6,7 +6,7 @@
     <file preprocess="xml-stripblanks">cc-background-preview.ui</file>
   </gresource>
 
-  <gresource prefix="/org/gnome/Settings">
+  <gresource prefix="/org/hypr/Settings">
     <file preprocess="xml-stripblanks">icons/scalable/actions/background-selected-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/slideshow-symbolic.svg</file>
   </gresource>

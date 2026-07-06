@@ -252,8 +252,8 @@ handle_launch_search (CcSearchProvider *self, GDBusMethodInvocation *invocation,
     gdk_app_launch_context_set_timestamp (launch_context, timestamp);
 
     joined_terms = g_strjoinv (" ", terms);
-    command_line = g_strdup_printf ("gnome-control-center -s '%s'", joined_terms);
-    app = g_app_info_create_from_commandline (command_line, "gnome-control-center.desktop",
+    command_line = g_strdup_printf ("hypr-control-center -s '%s'", joined_terms);
+    app = g_app_info_create_from_commandline (command_line, "org.hypr.Settings.desktop",
                                               G_APP_INFO_CREATE_SUPPORTS_STARTUP_NOTIFICATION, &error);
     if (!app) {
         g_dbus_method_invocation_return_gerror (invocation, error);

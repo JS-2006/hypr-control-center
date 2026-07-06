@@ -37,8 +37,8 @@ executable(
 )
 
 executable(
-  'gnome-control-center-print-renderer',
-  'gnome-control-center-print-renderer.c',
+  'hypr-control-center-print-renderer',
+  'hypr-control-center-print-renderer.c',
   include_directories: [ top_inc ],
   dependencies: [ print_renderer_deps ],
   c_args: cflags,

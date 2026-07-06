@@ -14,7 +14,7 @@
     <file>assets/touch-scroll-traditional.webm</file>
     <file>assets/tap-to-click.webm</file>
   </gresource>
-  <gresource prefix="/org/gnome/Settings">
+  <gresource prefix="/org/hypr/Settings">
     <file preprocess="xml-stripblanks">icons/scalable/actions/mouse-test-click-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mouse-test-scroll-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/devices/input-pointing-stick-symbolic.svg</file>

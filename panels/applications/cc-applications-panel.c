@@ -732,7 +732,7 @@ update_sandbox_banner (CcApplicationsPanel *self, const gchar *app_id, gboolean 
     gboolean is_system = FALSE;
     gboolean show_banner = FALSE;
     static const gchar *system_apps[] = {
-        "org.gnome.Settings", "org.gnome.Nautilus", "org.gnome.DiskUtility",
+        "org.hypr.Settings", "org.gnome.Nautilus", "org.gnome.DiskUtility",
         "org.gnome.Tour",     "org.gnome.baobab",   "org.gnome.Yelp",
     };
     gsize i;

@@ -1,6 +1,6 @@
 polkit_conf = configuration_data()
 polkit_conf.set('libexecdir', control_center_libexecdir)
-polkit = 'org.gnome.controlcenter.remote-login-helper.policy'
+polkit = 'org.hypr.controlcenter.remote-login-helper.policy'
 
 ui_sources = files(
   'cc-secure-shell-page.blp',

@@ -23,7 +23,6 @@ gboolean
 cc_config_init (GError **error)
 {
     JsonParser *parser;
-    gboolean ret = TRUE;
 
     config_path = get_config_path ();
 

@@ -7,7 +7,7 @@
   <vendor>The GNOME Project</vendor>
   <vendor_url>http://www.gnome.org/</vendor_url>
 
-  <action id="org.gnome.controlcenter.remote-session-helper">
+  <action id="org.hypr.controlcenter.remote-session-helper">
   <description>Enable or disable remote sessions</description>
     <message>Authentication is required to enable or disable remote sessions</message>
     <defaults>

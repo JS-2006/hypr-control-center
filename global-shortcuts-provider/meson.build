@@ -1,7 +1,7 @@
 service_conf = configuration_data()
 service_conf.set('libexecdir', control_center_libexecdir)
 
-service = 'org.gnome.Settings.GlobalShortcutsProvider.service'
+service = 'org.hypr.Settings.GlobalShortcutsProvider.service'
 
 configure_file(
   input: service + '.in',
@@ -50,7 +50,7 @@ sources += gnome.gdbus_codegen(
 )
 
 executable(
-  'gnome-control-center-global-shortcuts-provider',
+  'hypr-control-center-global-shortcuts-provider',
   sources,
   include_directories: [top_inc],
   dependencies:  [

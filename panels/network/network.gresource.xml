@@ -15,7 +15,7 @@
     <!-- Wi-Fi panel -->
     <file preprocess="xml-stripblanks">cc-wifi-panel.ui</file>
   </gresource>
-  <gresource prefix="/org/gnome/Settings">
+  <gresource prefix="/org/hypr/Settings">
     <!-- Wi-Fi panel icons -->
     <file preprocess="xml-stripblanks">icons/scalable/actions/qr-code-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/lock-small-symbolic.svg</file>

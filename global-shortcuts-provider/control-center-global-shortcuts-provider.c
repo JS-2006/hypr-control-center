@@ -115,7 +115,7 @@ cc_global_shortcuts_provider_app_get ()
         return singleton;
 
     singleton = g_object_new (CC_TYPE_GLOBAL_SHORTCUTS_PROVIDER_APP, "application-id",
-                              "org.gnome.Settings.GlobalShortcutsProvider", "flags", G_APPLICATION_IS_SERVICE, NULL);
+                              "org.hypr.Settings.GlobalShortcutsProvider", "flags", G_APPLICATION_IS_SERVICE, NULL);
 
     return singleton;
 }

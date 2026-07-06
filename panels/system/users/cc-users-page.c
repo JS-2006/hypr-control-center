@@ -45,7 +45,7 @@
 #include <locale.h>
 #include <polkit/polkit.h>
 
-#define USER_ACCOUNTS_PERMISSION "org.gnome.controlcenter.user-accounts.administration"
+#define USER_ACCOUNTS_PERMISSION "org.hypr.controlcenter.user-accounts.administration"
 
 struct _CcUsersPage {
     AdwNavigationPage parent_instance;

@@ -4,8 +4,8 @@ metainfo_conf.set('release-version', meson.project_version())
 
 metainfo_file = i18n.merge_file(
   input: configure_file(
-    input: 'org.gnome.Settings.metainfo.xml.in.in',
-    output: 'org.gnome.Settings.metainfo.xml.in',
+    input: 'org.hypr.Settings.metainfo.xml.in.in',
+    output: 'org.hypr.Settings.metainfo.xml.in',
     configuration: metainfo_conf
   ),
   output: '@0@.metainfo.xml'.format(application_id),

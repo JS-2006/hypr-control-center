@@ -26,7 +26,7 @@ blueprints += custom_target(
 
 polkit_conf = configuration_data()
 polkit_conf.set('libexecdir', control_center_libexecdir)
-polkit = 'org.gnome.controlcenter.remote-session-helper.policy'
+polkit = 'org.hypr.controlcenter.remote-session-helper.policy'
 
 polkit_in = configure_file(
   input: polkit + '.in.in',

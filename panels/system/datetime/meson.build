@@ -26,7 +26,7 @@ blueprints += custom_target(
   command: [blueprint_compiler, 'batch-compile', '@OUTDIR@', '@CURRENT_SOURCE_DIR@', '@INPUT@']
 )
 
-polkit = 'org.gnome.controlcenter.@0@.policy'.format(cappletname)
+polkit = 'org.hypr.controlcenter.@0@.policy'.format(cappletname)
 
 i18n.merge_file(
   input: polkit + '.in',

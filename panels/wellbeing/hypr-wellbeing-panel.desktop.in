@@ -4,7 +4,7 @@
 [Desktop Entry]
 Name=Wellbeing
 Comment=Review and limit the amount of time you spend at the computer screen
-Exec=gnome-control-center wellbeing
+Exec=hypr-control-center wellbeing
 # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 Icon=org.gnome.Settings-wellbeing-symbolic
 Terminal=false
