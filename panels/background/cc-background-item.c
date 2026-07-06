@@ -27,7 +27,6 @@
 #include <gtk/gtk.h>
 
 #include <gdesktop-enums.h>
-#include <gnome-bg/gnome-bg.h>
 
 #include "cc-background-enum-types.h"
 #include "cc-background-item.h"
@@ -150,59 +149,20 @@ run_in_thread (GTask *task, GTaskThreadFunc func)
         thread = g_thread_new ("[cc-background-item]", run_in_thread_worker, NULL);
     g_mutex_unlock (&thread_mutex);
 }
-
-static GnomeBG *
-item_to_gnome_bg (CcBackgroundItem *item, gboolean dark)
+static char *
+item_get_path (CcBackgroundItem *item, gboolean dark)
 {
-    GnomeBG *bg;
-    char *uri;
-    g_autoptr(GFile) file = NULL;
-    g_autofree gchar *filename = NULL;
-    GdkRGBA pcolor = { 0, 0, 0, 0 };
-    GdkRGBA scolor = { 0, 0, 0, 0 };
-
-    uri = dark ? item->uri_dark : item->uri;
-
-    g_return_val_if_fail (uri != NULL, NULL);
-
-    bg = gnome_bg_new ();
-
-    file = g_file_new_for_commandline_arg (uri);
-    filename = g_file_get_path (file);
-    gnome_bg_set_filename (bg, filename);
-
-    if (item->primary_color != NULL) {
-        gdk_rgba_parse (&pcolor, item->primary_color);
-    }
-    if (item->secondary_color != NULL) {
-        gdk_rgba_parse (&scolor, item->secondary_color);
-    }
-
-    gnome_bg_set_rgba (bg, item->shading, &pcolor, &scolor);
-    gnome_bg_set_placement (bg, item->placement);
-
-    return bg;
+    const char *uri = dark ? item->uri_dark : item->uri;
+    if (!uri) return NULL;
+    if (g_str_has_prefix (uri, "file://"))
+        return g_filename_from_uri (uri, NULL, NULL);
+    return g_strdup (uri);
 }
 
 gboolean
 cc_background_item_changes_with_time (CcBackgroundItem *item)
 {
-    g_autoptr(GnomeBG) bg = NULL;
-    g_autoptr(GnomeBG) bg_dark = NULL;
-    gboolean changes = FALSE;
-
-    g_return_val_if_fail (CC_IS_BACKGROUND_ITEM (item), FALSE);
-
-    if (item->uri != NULL) {
-        bg = item_to_gnome_bg (item, FALSE);
-        changes |= gnome_bg_changes_with_time (bg);
-    }
-    if (item->uri_dark != NULL && !changes) {
-        bg_dark = item_to_gnome_bg (item, TRUE);
-        changes |= gnome_bg_changes_with_time (bg_dark);
-    }
-
-    return changes;
+    return FALSE;
 }
 
 gboolean
@@ -216,32 +176,28 @@ cc_background_item_has_dark_version (CcBackgroundItem *item)
 static void
 update_size (CcBackgroundItem *item)
 {
-    g_autoptr(GnomeBG) bg = NULL;
+    g_autofree char *path = NULL;
 
     g_clear_pointer (&item->size, g_free);
 
     if (item->uri == NULL) {
         item->size = g_strdup ("");
     } else {
-        bg = item_to_gnome_bg (item, FALSE);
-        if (gnome_bg_has_multiple_sizes (bg) || gnome_bg_changes_with_time (bg)) {
-            item->size = g_strdup (_("multiple sizes"));
-        } else {
-            gdk_pixbuf_get_file_info (gnome_bg_get_filename (bg), &item->width, &item->height);
-            /* translators: 100 × 100px
-             * Note that this is not an "x", but U+00D7 MULTIPLICATION SIGN */
+        path = item_get_path (item, FALSE);
+        if (path) {
+            gdk_pixbuf_get_file_info (path, &item->width, &item->height);
             item->size = g_strdup_printf (_("%d × %d"), item->width, item->height);
+        } else {
+            item->size = g_strdup ("");
         }
     }
 }
 
 typedef struct {
-    GnomeDesktopThumbnailFactory *thumbs;
-    GnomeBG *bg;
-    GdkRectangle monitor_layout;
     int width;
     int height;
     int scale_factor;
+    char *path;
     guint dark : 1;
     guint cached_result : 1;
 } GetThumbnailAsync;
@@ -250,9 +206,7 @@ static void
 get_thumbnail_async_free (gpointer data)
 {
     GetThumbnailAsync *state = data;
-
-    g_clear_object (&state->thumbs);
-    g_clear_object (&state->bg);
+    g_free (state->path);
     g_free (state);
 }
 
@@ -261,17 +215,16 @@ cc_background_item_get_thumbnail_worker (GTask *task, gpointer source_object, gp
                                          GCancellable *cancellable)
 {
     GetThumbnailAsync *state = task_data;
-    CcBackgroundItem *item = source_object;
     GdkPixbuf *pixbuf;
 
     g_assert (G_IS_TASK (task));
-    g_assert (CC_IS_BACKGROUND_ITEM (item));
-    g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
     g_assert (state != NULL);
-    g_assert (state->thumbs != NULL);
+    g_assert (state->path != NULL);
 
-    pixbuf = gnome_bg_create_thumbnail (state->bg, state->thumbs, &state->monitor_layout,
-                                        state->scale_factor * state->width, state->scale_factor * state->height);
+    pixbuf = gdk_pixbuf_new_from_file_at_scale (state->path,
+                                                 state->scale_factor * state->width,
+                                                 state->scale_factor * state->height,
+                                                 TRUE, NULL);
 
     if (pixbuf != NULL)
         g_task_return_pointer (task, pixbuf, g_object_unref);
@@ -280,20 +233,16 @@ cc_background_item_get_thumbnail_worker (GTask *task, gpointer source_object, gp
 }
 
 void
-cc_background_item_get_thumbnail_async (CcBackgroundItem *item, GnomeDesktopThumbnailFactory *thumbs, int width,
+cc_background_item_get_thumbnail_async (CcBackgroundItem *item, gpointer thumbs, int width,
                                         int height, int scale_factor, gboolean dark, GCancellable *cancellable,
                                         GAsyncReadyCallback callback, gpointer user_data)
 {
-    g_autoptr(GdkMonitor) monitor = NULL;
     g_autoptr(GTask) task = NULL;
     GetThumbnailAsync *state;
     CachedThumbnail *thumbnail;
-    GListModel *monitors;
-    GdkDisplay *display;
 
     g_return_if_fail (CC_IS_BACKGROUND_ITEM (item));
     g_return_if_fail (width > 0 && height > 0);
-    g_return_if_fail (thumbs != NULL);
     g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
     task = g_task_new (item, cancellable, callback, user_data);
@@ -304,7 +253,6 @@ cc_background_item_get_thumbnail_async (CcBackgroundItem *item, GnomeDesktopThum
 
     thumbnail = dark ? &item->cached_thumbnail_dark : &item->cached_thumbnail;
 
-    /* Use the cached thumbnail if the sizes match */
     if (thumbnail->thumbnail && thumbnail->width == width && thumbnail->height == height
         && thumbnail->scale_factor == scale_factor) {
         state->cached_result = TRUE;
@@ -312,25 +260,12 @@ cc_background_item_get_thumbnail_async (CcBackgroundItem *item, GnomeDesktopThum
         return;
     }
 
-    display = gdk_display_get_default ();
-    monitors = gdk_display_get_monitors (display);
-    monitor = g_list_model_get_item (monitors, 0);
-
-    state->thumbs = g_object_ref (thumbs);
-    gdk_monitor_get_geometry (monitor, &state->monitor_layout);
     state->width = width;
     state->height = height;
     state->scale_factor = scale_factor;
     state->dark = !!dark;
-    state->bg = item_to_gnome_bg (item, dark);
+    state->path = item_get_path (item, dark);
 
-    /* g_task_run_in_thread() will use a threadpool which may jump the
-     * number of parallel workers to around 10. On low-memory systems, that
-     * could cause excessive memory use to the point of paging.
-     *
-     * What we really want is non-blocking more than massive concurrency,
-     * so use a single worker thread but retain GTask usage.
-     */
     run_in_thread (task, cc_background_item_get_thumbnail_worker);
 }
 
@@ -764,10 +699,10 @@ cc_background_item_class_init (CcBackgroundItemClass *klass)
 
     props[PROP_URI_DARK] = g_param_spec_string ("uri-dark", NULL, NULL, NULL, G_PARAM_READWRITE);
 
-    props[PROP_PLACEMENT] = g_param_spec_enum ("placement", NULL, NULL, G_DESKTOP_TYPE_BACKGROUND_STYLE,
+    props[PROP_PLACEMENT] = g_param_spec_enum ("placement", NULL, NULL, G_TYPE_DESKTOP_BACKGROUND_STYLE,
                                                G_DESKTOP_BACKGROUND_STYLE_SCALED, G_PARAM_READWRITE);
 
-    props[PROP_SHADING] = g_param_spec_enum ("shading", NULL, NULL, G_DESKTOP_TYPE_BACKGROUND_SHADING,
+    props[PROP_SHADING] = g_param_spec_enum ("shading", NULL, NULL, G_TYPE_DESKTOP_BACKGROUND_SHADING,
                                              G_DESKTOP_BACKGROUND_SHADING_SOLID, G_PARAM_READWRITE);
 
     props[PROP_PRIMARY_COLOR] = g_param_spec_string ("primary-color", NULL, NULL, "#000000000000", G_PARAM_READWRITE);
@@ -918,8 +853,8 @@ cc_background_item_dump (CcBackgroundItem *item)
         g_debug ("pcolor:\t\t\t%s", item->primary_color);
     if (item->secondary_color)
         g_debug ("scolor:\t\t\t%s", item->secondary_color);
-    g_debug ("placement:\t\t%s", enum_to_str (G_DESKTOP_TYPE_BACKGROUND_STYLE, item->placement));
-    g_debug ("shading:\t\t%s", enum_to_str (G_DESKTOP_TYPE_BACKGROUND_SHADING, item->shading));
+    g_debug ("placement:\t\t%s", enum_to_str (G_TYPE_DESKTOP_BACKGROUND_STYLE, item->placement));
+    g_debug ("shading:\t\t%s", enum_to_str (G_TYPE_DESKTOP_BACKGROUND_SHADING, item->shading));
     if (item->source_url)
         g_debug ("source URL:\t\t%s", item->source_url);
     if (item->source_xml)

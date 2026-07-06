@@ -31,7 +31,6 @@
 
 #include "cc-hostname.h"
 #include "cc-list-row.h"
-#include "cc-qr-code-dialog.h"
 #include "cc-wifi-hotspot-dialog.h"
 #include "hostname-helper.h"
 #include "network-dialogs.h"
@@ -912,16 +911,6 @@ show_details_for_row (NetDeviceWifi *self, CcWifiConnectionRow *row, CcWifiConne
 static void
 show_qr_code_for_row (NetDeviceWifi *self, CcWifiConnectionRow *row, CcWifiConnectionList *list)
 {
-    NMConnection *connection;
-    GtkWidget *dialog;
-
-    connection = cc_wifi_connection_row_get_connection (row);
-
-    // getting a new "local" connection, since we don't want to populate the secrets of the original connection
-    connection = NM_CONNECTION (nm_client_get_connection_by_id (self->client, nm_connection_get_id (connection)));
-
-    dialog = cc_qr_code_dialog_new (connection);
-    adw_dialog_present (ADW_DIALOG (dialog), GTK_WIDGET (self));
 }
 
 static void

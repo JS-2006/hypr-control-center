@@ -22,8 +22,7 @@
 
 #include "cc-input-source.h"
 
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-xkb-info.h>
+#include "stub-xkb-info.h"
 
 G_BEGIN_DECLS
 

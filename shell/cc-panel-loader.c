@@ -33,48 +33,35 @@
 /* Extension points */
 extern GType cc_applications_panel_get_type (void);
 extern GType cc_background_panel_get_type (void);
-#ifdef BUILD_BLUETOOTH
-extern GType cc_bluetooth_panel_get_type (void);
-#endif /* BUILD_BLUETOOTH */
-extern GType cc_color_panel_get_type (void);
-extern GType cc_date_time_panel_get_type (void);
 extern GType cc_display_panel_get_type (void);
-extern GType cc_keyboard_panel_get_type (void);
 extern GType cc_mouse_panel_get_type (void);
 extern GType cc_multitasking_panel_get_type (void);
+extern GType cc_notifications_panel_get_type (void);
+extern GType cc_bluetooth_panel_get_type (void);
+extern GType cc_color_panel_get_type (void);
+extern GType cc_online_accounts_panel_get_type (void);
+extern GType cc_sharing_panel_get_type (void);
+extern GType cc_sound_panel_get_type (void);
+#ifdef BUILD_WWAN
+extern GType cc_wwan_panel_get_type (void);
+#endif
 #ifdef BUILD_NETWORK
 extern GType cc_network_panel_get_type (void);
 extern GType cc_wifi_panel_get_type (void);
 #endif /* BUILD_NETWORK */
-extern GType cc_notifications_panel_get_type (void);
-extern GType cc_online_accounts_panel_get_type (void);
 extern GType cc_power_panel_get_type (void);
 extern GType cc_printers_panel_get_type (void);
 extern GType cc_privacy_panel_get_type (void);
-extern GType cc_search_panel_get_type (void);
-extern GType cc_sharing_panel_get_type (void);
-extern GType cc_sound_panel_get_type (void);
-extern GType cc_system_panel_get_type (void);
-extern GType cc_ua_panel_get_type (void);
-#ifdef BUILD_WACOM
 extern GType cc_wacom_panel_get_type (void);
-#endif /* BUILD_WACOM */
-extern GType cc_wellbeing_panel_get_type (void);
-#ifdef BUILD_WWAN
-extern GType cc_wwan_panel_get_type (void);
-#endif /* BUILD_WWAN */
+extern GType cc_keyboard_panel_get_type (void);
+extern GType cc_search_panel_get_type (void);
+extern GType cc_ua_panel_get_type (void);
 
 /* Static init functions */
+extern void cc_wacom_panel_static_init_func (void);
 #ifdef BUILD_NETWORK
 extern void cc_wifi_panel_static_init_func (void);
 #endif /* BUILD_NETWORK */
-extern void cc_sharing_panel_static_init_func (void);
-#ifdef BUILD_WACOM
-extern void cc_wacom_panel_static_init_func (void);
-#endif /* BUILD_WACOM */
-#ifdef BUILD_WWAN
-extern void cc_wwan_panel_static_init_func (void);
-#endif /* BUILD_WWAN */
 
 #define PANEL_TYPE(name, get_type, init_func) { name, get_type, init_func }
 
@@ -87,35 +74,29 @@ extern void cc_wwan_panel_static_init_func (void);
 static CcPanelLoaderVtable default_panels[] = {
     PANEL_TYPE ("applications", cc_applications_panel_get_type, NULL),
     PANEL_TYPE ("background", cc_background_panel_get_type, NULL),
-#ifdef BUILD_BLUETOOTH
-    PANEL_TYPE ("bluetooth", cc_bluetooth_panel_get_type, NULL),
-#endif
-    PANEL_TYPE ("color", cc_color_panel_get_type, NULL),
     PANEL_TYPE ("display", cc_display_panel_get_type, NULL),
     PANEL_TYPE ("keyboard", cc_keyboard_panel_get_type, NULL),
     PANEL_TYPE ("mouse", cc_mouse_panel_get_type, NULL),
     PANEL_TYPE ("multitasking", cc_multitasking_panel_get_type, NULL),
+    PANEL_TYPE ("notifications", cc_notifications_panel_get_type, NULL),
+    PANEL_TYPE ("bluetooth", cc_bluetooth_panel_get_type, NULL),
+    PANEL_TYPE ("color", cc_color_panel_get_type, NULL),
+    PANEL_TYPE ("online-accounts", cc_online_accounts_panel_get_type, NULL),
+    PANEL_TYPE ("sharing", cc_sharing_panel_get_type, NULL),
+    PANEL_TYPE ("sound", cc_sound_panel_get_type, NULL),
+#ifdef BUILD_WWAN
+    PANEL_TYPE ("wwan", cc_wwan_panel_get_type, NULL),
+#endif
 #ifdef BUILD_NETWORK
     PANEL_TYPE ("network", cc_network_panel_get_type, NULL),
     PANEL_TYPE ("wifi", cc_wifi_panel_get_type, cc_wifi_panel_static_init_func),
 #endif
-    PANEL_TYPE ("notifications", cc_notifications_panel_get_type, NULL),
-    PANEL_TYPE ("online-accounts", cc_online_accounts_panel_get_type, NULL),
     PANEL_TYPE ("power", cc_power_panel_get_type, NULL),
     PANEL_TYPE ("printers", cc_printers_panel_get_type, NULL),
     PANEL_TYPE ("privacy", cc_privacy_panel_get_type, NULL),
     PANEL_TYPE ("search", cc_search_panel_get_type, NULL),
-    PANEL_TYPE ("sharing", cc_sharing_panel_get_type, cc_sharing_panel_static_init_func),
-    PANEL_TYPE ("sound", cc_sound_panel_get_type, NULL),
-    PANEL_TYPE ("system", cc_system_panel_get_type, NULL),
     PANEL_TYPE ("universal-access", cc_ua_panel_get_type, NULL),
-#ifdef BUILD_WACOM
     PANEL_TYPE ("wacom", cc_wacom_panel_get_type, cc_wacom_panel_static_init_func),
-#endif
-    PANEL_TYPE ("wellbeing", cc_wellbeing_panel_get_type, NULL),
-#ifdef BUILD_WWAN
-    PANEL_TYPE ("wwan", cc_wwan_panel_get_type, cc_wwan_panel_static_init_func),
-#endif
 };
 
 /* Override for the panel vtable. When NULL, the default_panels will
@@ -130,10 +111,6 @@ typedef struct {
 } CcSubpageLoaderVtable;
 
 static CcSubpageLoaderVtable default_subpages[] = {
-    { CC_CATEGORY_SYSTEM, "about" },
-    { CC_CATEGORY_SYSTEM, "datetime" },
-    { CC_CATEGORY_SYSTEM, "region" },
-    { CC_CATEGORY_SYSTEM, "users" },
 };
 static CcSubpageLoaderVtable *subpages_vtable = default_subpages;
 static gsize supages_vtable_len = G_N_ELEMENTS (default_subpages);
@@ -152,19 +129,19 @@ parse_categories (GDesktopAppInfo *app)
 
 #define const_strv(s) ((const gchar *const *) s)
 
-    if (g_strv_contains (const_strv (split), "X-GNOME-ConnectivitySettings"))
+    if (g_strv_contains (const_strv (split), "X-Hypr-ConnectivitySettings"))
         retval = CC_CATEGORY_CONNECTIVITY;
-    else if (g_strv_contains (const_strv (split), "X-GNOME-PersonalizationSettings"))
+    else if (g_strv_contains (const_strv (split), "X-Hypr-PersonalizationSettings"))
         retval = CC_CATEGORY_PERSONALIZATION;
-    else if (g_strv_contains (const_strv (split), "X-GNOME-AccountSettings"))
+    else if (g_strv_contains (const_strv (split), "X-Hypr-AccountSettings"))
         retval = CC_CATEGORY_ACCOUNT;
-    else if (g_strv_contains (const_strv (split), "X-GNOME-DevicesSettings"))
+    else if (g_strv_contains (const_strv (split), "X-Hypr-DevicesSettings"))
         retval = CC_CATEGORY_DEVICES;
-    else if (g_strv_contains (const_strv (split), "X-GNOME-DetailsSettings"))
+    else if (g_strv_contains (const_strv (split), "X-Hypr-DetailsSettings"))
         retval = CC_CATEGORY_DETAILS;
-    else if (g_strv_contains (const_strv (split), "X-GNOME-SystemSettings"))
+    else if (g_strv_contains (const_strv (split), "X-Hypr-SystemSettings"))
         retval = CC_CATEGORY_SYSTEM;
-    else if (g_strv_contains (const_strv (split), "X-GNOME-PrivacySettings"))
+    else if (g_strv_contains (const_strv (split), "X-Hypr-PrivacySettings"))
         retval = CC_CATEGORY_PRIVACY;
     else if (g_strv_contains (const_strv (split), "HardwareSettings"))
         retval = CC_CATEGORY_HARDWARE;
@@ -238,7 +215,7 @@ cc_panel_loader_fill_model (CcShellModel *model)
         g_autofree gchar *desktop_name = NULL;
         gint category;
 
-        desktop_name = g_strconcat ("gnome-", panels_vtable[i].name, "-panel.desktop", NULL);
+        desktop_name = g_strconcat ("hypr-", panels_vtable[i].name, "-panel.desktop", NULL);
         app = g_desktop_app_info_new (desktop_name);
 
         if (!app) {
@@ -257,7 +234,7 @@ cc_panel_loader_fill_model (CcShellModel *model)
         g_autoptr(GDesktopAppInfo) app = NULL;
         g_autofree gchar *desktop_name = NULL;
 
-        desktop_name = g_strconcat ("gnome-", subpages_vtable[i].name, "-panel.desktop", NULL);
+        desktop_name = g_strconcat ("hypr-", subpages_vtable[i].name, "-panel.desktop", NULL);
         app = g_desktop_app_info_new (desktop_name);
 
         if (!app) {

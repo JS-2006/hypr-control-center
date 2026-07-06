@@ -42,7 +42,7 @@
 #include <gtk/gtk.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-languages.h>
+#include "stub-languages.h"
 #include <libgnome-desktop/gnome-xkb-info.h>
 
 #include <locale.h>
@@ -765,7 +765,7 @@ cc_region_page_class_init (CcRegionPageClass *klass)
     g_type_ensure (CC_TYPE_LIST_ROW);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/system/region/cc-region-page.ui");
+                                                 "/org/hypr/Settings/system/region/cc-region-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcRegionPage, formats_row);
     gtk_widget_class_bind_template_child (widget_class, CcRegionPage, banner);

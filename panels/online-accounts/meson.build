@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
   type: 'desktop',
@@ -47,7 +47,7 @@ sources += gnome.compile_resources(
 
 deps = common_deps + [
   goa_dep,
-  dependency('goa-backend-1.0', version: goa_req_version),
+  goa_backend_dep,
 ]
 
 panels_libs += static_library(

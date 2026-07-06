@@ -308,13 +308,6 @@ template $CcApplicationsPanel: $CcPanel {
               action-name: "navigation.push";
               action-target: "'builtin-page'";
             }
-
-            $CcListRow global_shortcuts_row {
-              title: _("Global S_hortcuts");
-              subtitle: _("Global actions that have been registered for use");
-              show-arrow: true;
-              activated => $global_shortcuts_cb(template);
-            }
           }
 
           Adw.PreferencesGroup general_group {

@@ -29,6 +29,7 @@
 
 #include "cc-background-panel.h"
 
+#include "bg-apply.h"
 #include "cc-background-chooser.h"
 #include "cc-background-item.h"
 #include "cc-background-preview.h"
@@ -387,6 +388,13 @@ set_background (CcBackgroundPanel *self, GSettings *settings, CcBackgroundItem *
 
     /* Apply all changes */
     g_settings_apply (settings);
+
+    /* Apply wallpaper via hyprpaper */
+    if (uri && !set_dark) {
+        g_autoptr(GError) error = NULL;
+        if (!bg_apply_wallpaper (uri, &error))
+            g_warning ("Failed to set wallpaper: %s", error->message);
+    }
 
     /* Clean out dconf if the user went back to distro defaults */
     reset_settings_if_defaults (self, settings, set_dark);

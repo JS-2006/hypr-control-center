@@ -61,7 +61,7 @@ cc_remote_desktop_page_class_init (CcRemoteDesktopPageClass *klass)
     g_type_ensure (CC_TYPE_REMOTE_LOGIN_PAGE);
 
     gtk_widget_class_set_template_from_resource (
-        widget_class, "/org/gnome/control-center/system/remote-desktop/cc-remote-desktop-page.ui");
+        widget_class, "/org/hypr/Settings/system/remote-desktop/cc-remote-desktop-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcRemoteDesktopPage, desktop_sharing_page);
 }

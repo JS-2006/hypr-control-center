@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
   type: 'desktop',
@@ -54,7 +54,6 @@ sources += gnome.gdbus_codegen(
 deps = common_deps + [
   colord_dep,
   m_dep,
-  dependency('colord-gtk4', version: '>= 0.1.24'),
 ]
 
 panels_libs += static_library(

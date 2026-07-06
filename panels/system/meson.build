@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
   type: 'desktop',
@@ -74,17 +74,6 @@ sources = files(
   'users/user-utils.c',
 )
 
-gdesktop_enums_header = files(
-  gsettings_desktop_dep.get_variable(pkgconfig: 'prefix') + '/include/gsettings-desktop-schemas/gdesktop-enums.h'
-)
-
-sources += gnome.mkenums_simple(
-  'gdesktop-enums-types',
-  sources: gdesktop_enums_header,
-  identifier_prefix: 'GDesktop',
-  symbol_prefix: 'g_desktop'
-)
-
 libsecret_dep = dependency('libsecret-1')
 gnutls_dep = dependency('gnutls')
 libgtop2 = dependency('libgtop-2.0')
@@ -95,10 +84,10 @@ krb_dep = dependency('krb5', required: false)
 assert(krb_dep.found(), 'kerberos libraries not found in your path')
 
 deps = common_deps + [
-  accounts_dep,
-  gcr_dep,
   gdk_pixbuf_dep,
-  gnome_desktop_dep,
+
+  dependency('accountsservice'),
+  dependency('gcr-4'),
   gnutls_dep,
   gudev_dep,
   libgtop2,
@@ -106,21 +95,9 @@ deps = common_deps + [
   libsecret_dep,
   krb_dep,
   polkit_gobject_dep,
-  pwquality_dep,
+
   udisks2,
 ]
-
-if gmobile_dep.found()
-  deps += gmobile_dep
-endif
-
-if enable_ibus
-  deps += ibus_dep
-endif
-
-if enable_malcontent
-  deps += malcontent_dep
-endif
 
 settings_daemon = 'org.gnome.SettingsDaemon'
 gsd_gdbus = settings_daemon + '.Sharing'

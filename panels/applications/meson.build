@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
          type : 'desktop',
@@ -11,7 +11,6 @@ i18n.merge_file(
 )
 
 ui_sources = files(
-  'cc-application-shortcut-dialog.blp',
   'cc-applications-panel.blp',
   'cc-applications-row.blp',
   'cc-default-apps-page.blp',  
@@ -31,7 +30,6 @@ blueprints = custom_target(
 sources = files(
   'cc-applications-panel.c',
   'cc-applications-row.c',
-  'cc-application-shortcut-dialog.c',
   'cc-default-apps-page.c',
   'cc-default-apps-row.c',
   'cc-removable-media-settings.c',
@@ -66,14 +64,6 @@ if host_is_linux
   deps += mm_dep
 endif
 
-if enable_snap
-  deps += [ json_glib_dep, libsoup_dep ]
-  sources += [ 'cc-snap-row.c', 'cc-snapd-client.c' ]
-endif
-
-if enable_malcontent
-  deps += malcontent_dep
-endif
 
 panels_libs += static_library(
            cappletname,

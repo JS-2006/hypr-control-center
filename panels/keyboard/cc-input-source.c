@@ -83,6 +83,9 @@ launch_viewer (CcInputSource *source, const gchar *handle)
     g_autoptr(GPtrArray) argv = NULL;
     g_autofree gchar *layout_desc = NULL;
 
+    if (!KEYBOARD_PREVIEWER_EXEC || !KEYBOARD_PREVIEWER_EXEC[0])
+        return;
+
     argv = g_ptr_array_new ();
     g_ptr_array_add (argv, KEYBOARD_PREVIEWER_EXEC);
 

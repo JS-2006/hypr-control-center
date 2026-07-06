@@ -31,8 +31,6 @@
 
 #include <NetworkManager.h>
 #include <glib/gi18n.h>
-#include <gnome-qr-gtk/gnome-qr-widget.h>
-
 typedef enum {
     OPERATION_NULL,
     OPERATION_SHOW_DEVICE,
@@ -59,8 +57,6 @@ struct _CcWifiPanel {
     GtkWidget *spinner;
     GtkStack *stack;
     AdwDialog *stop_hotspot_dialog;
-    GnomeQrWidget *wifi_qr;
-
     NMClient *client;
 
     GPtrArray *devices;
@@ -178,24 +174,6 @@ wifi_panel_update_qr_image_cb (CcWifiPanel *self)
     child = NET_DEVICE_WIFI (gtk_stack_get_visible_child (self->stack));
     device = net_device_wifi_get_device (child);
     hotspot = wifi_device_get_hotspot (self, device);
-
-    if (hotspot) {
-        g_autofree gchar *str = NULL;
-        g_autoptr (GVariant) secrets = NULL;
-        g_autoptr (GError) error = NULL;
-
-        secrets = nm_remote_connection_get_secrets (NM_REMOTE_CONNECTION (hotspot),
-                                                    NM_SETTING_WIRELESS_SECURITY_SETTING_NAME, NULL, &error);
-        if (!error) {
-            nm_connection_update_secrets (hotspot, NM_SETTING_WIRELESS_SECURITY_SETTING_NAME, secrets, &error);
-
-            str = get_qr_string_for_connection (hotspot);
-
-            gnome_qr_widget_set_text (GNOME_QR_WIDGET (self->wifi_qr), str);
-        } else {
-            g_warning ("Error: %s", error->message);
-        }
-    }
 
     gtk_widget_set_visible (GTK_WIDGET (self->hotspot_box), hotspot != NULL);
     gtk_widget_set_opacity (GTK_WIDGET (self->list_label), hotspot == NULL);
@@ -754,8 +732,6 @@ cc_wifi_panel_class_init (CcWifiPanelClass *klass)
     gtk_widget_class_bind_template_child (widget_class, CcWifiPanel, spinner);
     gtk_widget_class_bind_template_child (widget_class, CcWifiPanel, stack);
     gtk_widget_class_bind_template_child (widget_class, CcWifiPanel, stop_hotspot_dialog);
-    gtk_widget_class_bind_template_child (widget_class, CcWifiPanel, wifi_qr);
-
     gtk_widget_class_bind_template_callback (widget_class, rfkill_switch_notify_activate_cb);
     gtk_widget_class_bind_template_callback (widget_class, on_stack_visible_child_changed_cb);
     gtk_widget_class_bind_template_callback (widget_class, on_stop_hotspot_dialog_response_cb);

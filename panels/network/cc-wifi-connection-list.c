@@ -60,8 +60,6 @@ static void on_device_ap_added_cb (CcWifiConnectionList *self, NMAccessPoint *ap
 static void on_device_ap_removed_cb (CcWifiConnectionList *self, NMAccessPoint *ap, NMDeviceWifi *device);
 static void on_row_configured_cb (CcWifiConnectionList *self, CcWifiConnectionRow *row);
 static void on_row_forget_cb (CcWifiConnectionList *self, CcWifiConnectionRow *row);
-static void on_row_show_qr_code_cb (CcWifiConnectionList *self, CcWifiConnectionRow *row);
-
 G_DEFINE_FINAL_TYPE (CcWifiConnectionList, cc_wifi_connection_list, ADW_TYPE_BIN)
 
 enum {
@@ -131,8 +129,6 @@ cc_wifi_connection_list_row_add (CcWifiConnectionList *self, NMConnection *conne
 
     g_signal_connect_object (res, "configure", G_CALLBACK (on_row_configured_cb), self, G_CONNECT_SWAPPED);
     g_signal_connect_object (res, "forget", G_CALLBACK (on_row_forget_cb), self, G_CONNECT_SWAPPED);
-    g_signal_connect_object (res, "show-qr-code", G_CALLBACK (on_row_show_qr_code_cb), self, G_CONNECT_SWAPPED);
-
     g_signal_emit_by_name (self, "add-row", res);
 
     return res;
@@ -247,12 +243,6 @@ static void
 on_row_forget_cb (CcWifiConnectionList *self, CcWifiConnectionRow *row)
 {
     g_signal_emit_by_name (self, "forget", row);
-}
-
-static void
-on_row_show_qr_code_cb (CcWifiConnectionList *self, CcWifiConnectionRow *row)
-{
-    g_signal_emit_by_name (self, "show_qr_code", row);
 }
 
 static void
@@ -674,8 +664,6 @@ cc_wifi_connection_list_class_init (CcWifiConnectionListClass *klass)
     g_object_class_install_properties (object_class, PROP_LAST, props);
 
     g_signal_new ("configure", CC_TYPE_WIFI_CONNECTION_LIST, G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL, G_TYPE_NONE, 1,
-                  CC_TYPE_WIFI_CONNECTION_ROW);
-    g_signal_new ("show_qr_code", CC_TYPE_WIFI_CONNECTION_LIST, G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL, G_TYPE_NONE, 1,
                   CC_TYPE_WIFI_CONNECTION_ROW);
     g_signal_new ("forget", CC_TYPE_WIFI_CONNECTION_LIST, G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL, G_TYPE_NONE, 1,
                   CC_TYPE_WIFI_CONNECTION_ROW);

@@ -7,6 +7,7 @@ dependent_panels = [
 panels = [
   'applications',
   'background',
+  'bluetooth',
   'color',
   'display',
   'mouse',
@@ -19,21 +20,13 @@ panels = [
   'search',
   'sharing',
   'sound',
-  'system',
   'universal-access',
-  'wellbeing',
+  'wacom',
   'wwan',
 ]
 
 if host_is_linux
   panels += ['network']
-endif
-
-if host_is_linux_not_s390
-  panels += [
-    'bluetooth',
-    'wacom'
-  ]
 endif
 
 panels_list = []

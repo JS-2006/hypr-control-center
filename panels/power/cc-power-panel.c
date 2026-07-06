@@ -23,7 +23,7 @@
 
 #include <gio/gdesktopappinfo.h>
 #include <glib/gi18n.h>
-#include <gnome-settings-daemon/gsd-enums.h>
+#include "gsd-enums.h"
 #include <libupower-glib/upower.h>
 
 #include "cc-battery-row.h"

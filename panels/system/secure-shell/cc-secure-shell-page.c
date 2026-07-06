@@ -79,7 +79,7 @@ cc_secure_shell_page_class_init (CcSecureShellPageClass *klass)
     object_class->dispose = cc_secure_shell_page_dispose;
 
     gtk_widget_class_set_template_from_resource (
-        widget_class, "/org/gnome/control-center/system/secure-shell/cc-secure-shell-page.ui");
+        widget_class, "/org/hypr/Settings/system/secure-shell/cc-secure-shell-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcSecureShellPage, hostname_row);
     gtk_widget_class_bind_template_child (widget_class, CcSecureShellPage, secure_shell_row);

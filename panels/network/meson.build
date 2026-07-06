@@ -16,7 +16,7 @@ panel_names = [
 panels_list += panel_names
 
 foreach name: panel_names
-  desktop = 'gnome-' + name + '-panel.desktop'
+  desktop = 'hypr-' + name + '-panel.desktop'
 
   i18n.merge_file(
     type: 'desktop',
@@ -31,7 +31,6 @@ endforeach
 ui_sources = files(
   'cc-net-proxy-page.blp',
   'cc-network-panel.blp',
-  'cc-qr-code-dialog.blp',
   'cc-wifi-connection-row.blp',
   'cc-wifi-hotspot-dialog.blp',
   'cc-wifi-panel.blp',
@@ -53,8 +52,6 @@ blueprints = custom_target(
 )
 
 sources = files(
-  'cc-qr-code.c',
-  'cc-qr-code-dialog.c',
   'cc-network-panel.c',
   'cc-net-proxy-page.c',
   'cc-wifi-connection-row.c',

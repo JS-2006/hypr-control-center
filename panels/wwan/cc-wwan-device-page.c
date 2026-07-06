@@ -552,7 +552,7 @@ cc_wwan_device_page_class_init (CcWwanDevicePageClass *klass)
 
     g_object_class_install_properties (object_class, N_PROPS, properties);
 
-    gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/control-center/wwan/cc-wwan-device-page.ui");
+    gtk_widget_class_set_template_from_resource (widget_class, "/org/hypr/Settings/wwan/cc-wwan-device-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcWwanDevicePage, advanced_settings_list);
     gtk_widget_class_bind_template_child (widget_class, CcWwanDevicePage, apn_settings_row);

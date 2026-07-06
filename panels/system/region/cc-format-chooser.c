@@ -34,7 +34,7 @@
 #include "cc-util.h"
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-languages.h>
+#include "stub-languages.h"
 
 struct _CcFormatChooser {
     AdwDialog parent_instance;
@@ -414,7 +414,7 @@ cc_format_chooser_class_init (CcFormatChooserClass *klass)
                                                NULL, NULL, NULL, G_TYPE_NONE, 0);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/system/region/cc-format-chooser.ui");
+                                                 "/org/hypr/Settings/system/region/cc-format-chooser.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcFormatChooser, split_view);
     gtk_widget_class_bind_template_child (widget_class, CcFormatChooser, region_filter_entry);

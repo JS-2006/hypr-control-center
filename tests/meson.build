@@ -9,10 +9,7 @@ subdir('common')
 #  subdir('network')
 #endif
 
-# FIXME: this is a workaround because interactive-tests don't work with libadwaita as a subproject. See !1754
-if not libadwaita_is_subproject
-  subdir('interactive-panels')
-endif
+subdir('interactive-panels')
 
 subdir('printers')
 subdir('keyboard')

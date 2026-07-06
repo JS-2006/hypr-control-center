@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
   type: 'desktop',
@@ -34,6 +34,7 @@ sources = files(
   'cc-display-config-manager.c',
   'cc-display-settings.c',
   'cc-night-light-page.c',
+  'cc-hyprsunset.c',
 )
 
 sources += gnome.compile_resources(
@@ -46,7 +47,7 @@ sources += gnome.compile_resources(
 )
 
 deps = common_deps + [
-  colord_dep,
+  dependency('json-glib-1.0'),
   m_dep,
   upower_glib_dep
 ]

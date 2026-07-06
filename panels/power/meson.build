@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
   type: 'desktop',
@@ -43,8 +43,12 @@ sources += gnome.compile_resources(
   dependencies: blueprints,
 )
 
+install_data(
+  'org.gnome.settings-daemon.plugins.power.gschema.xml',
+  install_dir: join_paths(control_center_datadir, 'glib-2.0', 'schemas')
+)
+
 deps = common_deps + [
-  gnome_settings_dep,
   upower_glib_dep
 ]
 

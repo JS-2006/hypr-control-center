@@ -1,6 +1,6 @@
 project(
-  'gnome-control-center', 'c',
-        version : '51.alpha',
+  'hypr-control-center', 'c',
+        version : '0.1.0',
         license : 'GPL2+',
   meson_version : '>= 0.60.0'
 )
@@ -33,7 +33,7 @@ blueprint_compiler = find_program('blueprint-compiler', version: '>= 0.19')
 
 config_h.set_quoted('TEST_NM_PYTHON', python.full_path())
 
-application_id = 'org.gnome.Settings'
+application_id = 'org.hypr.Settings'
 
 version_split = meson.project_version().split('.')
 
@@ -116,23 +116,8 @@ common_flags += cc.get_supported_arguments([
 add_project_arguments(common_flags, language: 'c')
 
 # Check that we meet the dependencies
-libgvc = subproject(
-  'gvc',
-  default_options: [
-    'static=true',
-    'alsa=false',
-    'package_name=' + control_center_gettext,
-    'package_version=' + meson.project_version(),
-    'werror=false',
-  ]
-)
-libgvc_dep = libgvc.get_variable('libgvc_dep')
-
-libadwaita_version = '>= 1.8.alpha'
-gtk_version = '>= 4.23.0'
-goa_req_version = '>= 3.51.0'
+gtk_version = '>= 4.22.0'
 pulse_req_version = '>= 2.0'
-malcontent_version = '>= 0.14.alpha'
 
 gtk_dep = dependency(
   'gtk4',
@@ -160,98 +145,35 @@ gtk_wayland_dep = dependency(
   ]
 )
 
-libadwaita_dep = dependency(
-  'libadwaita-1',
-  version: libadwaita_version,
-  required: false
-)
-# FIXME: this is a workaround because interactive-tests don't work with libadwaita as a subproject. See !1754
-libadwaita_is_subproject = not libadwaita_dep.found()
-if libadwaita_is_subproject
-  libadwaita_dep = dependency(
-    'libadwaita-1',
-    version: libadwaita_version,
-    fallback: 'libadwaita',
-    default_options: [
-      'examples=false',
-      'introspection=disabled',
-      'tests=false',
-      'vapi=false',
-      'werror=false',
-    ],
-  )
-endif
+libadwaita_dep = dependency('libadwaita-1', version: '>= 1.4')
 
-tecla_dep = dependency(
-  'tecla',
-  version: '>=47.0',
-  required: false
-)
-
-# Needs to be a subproject since tecla does not declare dependencies
-tecla_is_subproject = not tecla_dep.found()
-if tecla_is_subproject
-  tecla = subproject(
-    'tecla',
-    default_options: [
-      'werror=false',
-    ],
-  )
-endif
-
-subproject('libgxdp',
-  default_options: [
-    'tests=false',
-    'werror=false',
-  ],
-)
-
-gmobile_dep = dependency(
-  'gmobile',
-  version: '>= 0.6.0',
-  default_options: [
-    'examples=false',
-    'introspection=false',
-    'gtk_doc=false',
-    'tests=false',
-    'vapi=false',
-    'hwdb=false',
-  ],
-  required: false,
-)
-config_h.set('HAVE_GMOBILE', gmobile_dep.found(),
-             description: 'Define to 1 if gmobile is available')
-
-accounts_dep = dependency('accountsservice', version: '>= 23.11.69')
-colord_dep = dependency('colord', version: '>= 0.1.34')
 gdk_pixbuf_dep = dependency('gdk-pixbuf-2.0', version: '>= 2.23.0')
 gio_dep = dependency('gio-2.0')
 glib_dep = dependency('glib-2.0', version: '>= 2.76.6')
-gnome_desktop_dep = dependency('gnome-desktop-4')
-gnome_bg_dep = dependency('gnome-bg-4')
-gnome_qr_gtk_dep = dependency('gnome-qr-gtk-4')
-gnome_settings_dep = dependency('gnome-settings-daemon', version: '>= 48.rc', fallback: 'gsd')
-goa_dep = dependency('goa-1.0', version: goa_req_version, fallback: 'goa')
-gsettings_desktop_dep = dependency('gsettings-desktop-schemas', version: '>= 50.alpha')
 libxml_dep = dependency('libxml-2.0')
 pulse_dep = dependency('libpulse', version: pulse_req_version)
 pulse_mainloop_dep = dependency('libpulse-mainloop-glib', version: pulse_req_version)
 upower_glib_dep = dependency('upower-glib', version: '>= 1.90.6')
 gudev_dep = dependency('gudev-1.0', version: '>= 232')
 epoxy_dep = dependency('epoxy')
-gcr_dep = dependency('gcr-4', version: '>= 4.1.0')
-pwquality_dep = dependency('pwquality', version: '>= 1.2.2')
+json_glib_dep = dependency('json-glib-1.0')
+
+goa_dep = dependency('goa-1.0', version: '>= 3.45')
+goa_backend_dep = dependency('goa-backend-1.0', version: '>= 3.45')
 
 m_dep = cc.find_library('m')
+
+colord_dep = dependency('colord', version: '>= 1.4')
+gsettings_desktop_dep = dependency('gsettings-desktop-schemas', version: '>= 50.alpha')
 
 common_deps = [
   gio_dep,
   glib_dep,
-  gsettings_desktop_dep,
   libadwaita_dep,
   dependency('gio-unix-2.0'),
   dependency('gthread-2.0'),
   gtk_dep,
+  gsettings_desktop_dep,
 ]
 
 polkit_gobject_dep = dependency('polkit-gobject-1', version: '>= 0.103')
@@ -289,109 +211,33 @@ foreach header: check_headers
   assert(cc.has_header(header[1], args: cups_cflags), 'CUPS headers not found: ' + header[1])
 endforeach
 
-config_h.set10('HAVE_CUPS_HTTPCONNECT2',
-               cc.has_function('httpConnect2', dependencies: cups_dep),
-               description: 'Define if httpConnect2() is available in CUPS')
-
-
-# IBus support
-enable_ibus = get_option('ibus')
-if enable_ibus
-  ibus_dep = dependency('ibus-1.0', version: '>= 1.5.2')
-endif
-config_h.set('HAVE_IBUS', enable_ibus,
-             description: 'Defined if IBus support is enabled')
-
-# thunderbolt
-config_h.set10('HAVE_FN_EXPLICIT_BZERO',
-               cc.has_function('explicit_bzero', prefix: '''#include <string.h>'''),
-               description: 'Define if explicit_bzero is available')
-
-# Snap support
-enable_snap = get_option('snap')
-if enable_snap
-  libsoup_dep = dependency('libsoup-3.0')
-endif
-config_h.set('HAVE_SNAP', enable_snap,
-             description: 'Define to 1 if Snap support is enabled')
-
-# malcontent support
-enable_malcontent = get_option('malcontent')
-if enable_malcontent
-  malcontent_dep = dependency(
-    'malcontent-0',
-    version: malcontent_version,
-    fallback: [
-      'malcontent',
-      'libmalcontent_dep'
-    ],
-    default_options: [
-      'libgsystemservice:gtk_doc=false',
-    ],
-  )
-endif
-config_h.set('HAVE_MALCONTENT', enable_malcontent,
-             description: 'Define to 1 if malcontent support is enabled')
-
-# location services support
-location_services = get_option('location-services')
-config_h.set('HAVE_LOCATION_SERVICES', location_services.enabled(),
-             description: 'Whether location services is enabled')
-
-# Snap support and wellbeing panel
-json_glib_dep = dependency('json-glib-1.0')
-
-# SSHD socket activation support
-ssh_socket_activation = get_option('ssh_socket_activation')
-config_h.set('HAVE_SSH_SOCKET_ACTIVATION', ssh_socket_activation,
-             description: 'Whether SSH socket activation is enabled')
-
 if host_is_linux
-  # ModemManager
   mm_dep =  dependency('mm-glib', version: '>= 0.7')
-  # NetworkManager
   network_manager_deps = [
     dependency('libnm', version: '>= 1.52.0'),
     dependency('libnma-gtk4', version: '>= 1.10.2'),
-    gnome_qr_gtk_dep,
     mm_dep,
   ]
 endif
 config_h.set('BUILD_NETWORK', host_is_linux,
              description: 'Define to 1 to build the Network panel')
-config_h.set('HAVE_NETWORK_MANAGER', host_is_linux,
-             description: 'Define to 1 if NetworkManager is available')
+config_h.set('BUILD_BLUETOOTH', host_is_linux,
+             description: 'Define to 1 to build the Bluetooth panel')
 config_h.set('BUILD_WWAN', host_is_linux,
              description: 'Define to 1 to build the WWan panel')
-config_h.set('HAVE_WWAN', host_is_linux,
-             description: 'Define to 1 if WWan is available')
-
-if host_is_linux_not_s390
-  # gnome-bluetooth
-  gnome_bluetooth_dep = dependency('gnome-bluetooth-ui-3.0')
-
-  libwacom_dep = dependency('libwacom', version: '>= 1.4')
-
-  wacom_deps = [
-    libwacom_dep,
-  ]
-else
-  message('Bluetooth and Wacom panels will not be built (no USB support on this platform)')
-  message('Thunderbolt panel will not be built (not supported on this platform)')
-endif
-config_h.set('BUILD_BLUETOOTH', host_is_linux_not_s390,
-             description: 'Define to 1 to build the Bluetooth panel')
-config_h.set('HAVE_BLUETOOTH', host_is_linux_not_s390,
-             description: 'Define to 1 if bluetooth support is available')
-config_h.set('BUILD_WACOM', host_is_linux_not_s390,
-             description: 'Define to 1 to build the Wacom panel')
-config_h.set('HAVE_WACOM', host_is_linux_not_s390,
-             description: 'Define to 1 if Wacom is supportted')
-config_h.set('BUILD_THUNDERBOLT', host_is_linux_not_s390,
-             description: 'Define to 1 to build the Thunderbolt panel')
 
 fs = import('fs')
 gnome = import('gnome')
+
+# Try to find gdesktop-enums.h from gsettings-desktop-schemas
+gdesktop_enums_header = '/usr/include/gsettings-desktop-schemas/gdesktop-enums.h'
+if not fs.exists(gdesktop_enums_header)
+  gdesktop_enums_header = '/usr/local/include/gsettings-desktop-schemas/gdesktop-enums.h'
+endif
+gdesktop_enums_types = gnome.mkenums_simple('gdesktop-enums-types',
+  sources: gdesktop_enums_header,
+  install_header: false,
+)
 i18n = import('i18n')
 pkg = import('pkgconfig')
 
@@ -407,12 +253,10 @@ top_inc = include_directories('.')
 shell_inc = include_directories('shell')
 
 subdir('data/icons')
+subdir('libhypr')
 subdir('po')
 subdir('panels')
 subdir('shell')
-subdir('global-shortcuts-provider')
-subdir('search-provider')
-
 if get_option('tests')
   subdir('tests')
 endif
@@ -420,11 +264,6 @@ endif
 if get_option('documentation')
   subdir('man')
 endif
-
-gnome.post_install(
-  glib_compile_schemas: true,
-  gtk_update_icon_cache: true,
-)
 
 configure_file(
   output: 'config.h',
@@ -440,19 +279,8 @@ summary({
 )
 
 summary({
-    'GNOME Bluetooth': host_is_linux_not_s390,
     'NetworkManager': host_is_linux,
-    'Wacom': host_is_linux_not_s390,
   },
   section: 'Dependencies',
-  bool_yn: true,
-)
-
-summary({
-    'IBus': enable_ibus,
-    'Snap': enable_snap,
-    'Malcontent': enable_malcontent,
-  },
-  section: 'Optional Dependencies',
   bool_yn: true,
 )

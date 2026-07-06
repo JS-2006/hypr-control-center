@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/control-center/system">
+  <gresource prefix="/org/hypr/Settings/system">
     <file preprocess="xml-stripblanks">cc-system-panel.ui</file>
     <file preprocess="xml-stripblanks">about/cc-about-page.ui</file>
     <file preprocess="xml-stripblanks">datetime/cc-datetime-page.ui</file>
@@ -27,7 +27,7 @@
     <file alias="wordlist.txt">eff_short_wordlist_2_0.txt</file>
   </gresource>
 
-  <gresource prefix="/org/gnome/Settings">
+  <gresource prefix="/org/hypr/Settings">
     <file preprocess="xml-stripblanks">icons/scalable/actions/system-update-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/fingerprint-detection-complete-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/fingerprint-detection-symbolic.svg</file>

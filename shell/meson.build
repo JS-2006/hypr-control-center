@@ -1,30 +1,17 @@
 subdir('appdata')
 subdir('completions')
 
-service_conf = configuration_data()
-service_conf.set('bindir', control_center_bindir)
-service_conf.set('appid', application_id)
-
-service = 'org.gnome.Settings.service'
-
-configure_file(
-          input : service + '.in',
-         output : '@0@.service'.format(application_id),
-        install : true,
-    install_dir : join_paths(control_center_datadir, 'dbus-1', 'services'),
-  configuration : service_conf
-)
-
 desktop_conf = configuration_data()
+desktop_conf.set('appid', application_id)
 desktop_conf.set('icon', application_id)
 
-desktop = 'org.gnome.Settings.desktop'
+desktop = 'org.hypr.Settings.desktop'
 
 i18n.merge_file(
          type : 'desktop',
         input : configure_file(
             input: desktop + '.in',
-            output: 'org.gnome.Settings.desktop.in',
+            output: 'org.hypr.Settings.desktop.in',
             configuration: desktop_conf
         ),
        output : '@0@.desktop'.format(application_id),
@@ -53,10 +40,11 @@ blueprints = custom_target(
   command: [blueprint_compiler, 'batch-compile', '@OUTDIR@', '@CURRENT_SOURCE_DIR@', '@INPUT@']
 )
 
-# Common sources between gnome-control-center and
+# Common sources between hypr-control-center and
 # libtestshell.
 common_sources = files(
   'cc-application.c',
+  'cc-config.c',
   'cc-log.c',
   'cc-object-storage.c',
   'cc-panel-loader.c',
@@ -76,7 +64,7 @@ generated_sources = files()
 gresource_file = configure_file(
   input: meson.project_name() + '.gresource.xml.in',
   output: meson.project_name() + '.gresource.xml',
-  configuration: service_conf
+  configuration: desktop_conf
 )
 
 generated_sources += gnome.compile_resources(
@@ -108,21 +96,17 @@ libshell_dep = declare_dependency(
 
 
 ########################
-# gnome-control-center #
+# hypr-control-center #
 ########################
 
 shell_sources = common_sources + files('main.c')
 
 shell_deps = common_deps + [
-  libdevice_dep,
+  dependency('json-glib-1.0'),
   liblanguage_dep,
   libwidgets_dep,
   libshell_dep,
 ]
-
-if host_is_linux_not_s390
-  shell_deps += wacom_deps
-endif
 
 executable(
   meson.project_name(),
@@ -169,9 +153,3 @@ libtestshell_dep = declare_dependency(
             link_with : libtestshell
 )
 libtestshell_deps = common_deps + [ libwidgets_dep, libtestshell_dep ]
-
-
-install_data (
-  'org.gnome.Settings.gschema.xml',
-  install_dir : control_center_schemadir
-)

@@ -25,7 +25,6 @@
 struct _CcBackgroundPaintable {
     GObject parent_instance;
 
-    GnomeDesktopThumbnailFactory *thumbnail_factory;
     CcBackgroundItem *item;
     int width;
     int height;
@@ -42,7 +41,6 @@ struct _CcBackgroundPaintable {
 
 enum {
     PROP_0,
-    PROP_THUMBNAIL_FACTORY,
     PROP_ITEM,
     PROP_WIDTH,
     PROP_HEIGHT,
@@ -97,12 +95,12 @@ update_cache (CcBackgroundPaintable *self)
     self->cancellable = g_cancellable_new ();
 
     if ((self->paint_flags & CC_BACKGROUND_PAINT_LIGHT) || !has_dark)
-        cc_background_item_get_thumbnail_async (self->item, self->thumbnail_factory, self->width, self->height,
+        cc_background_item_get_thumbnail_async (self->item, NULL, self->width, self->height,
                                                 self->scale_factor, FALSE, self->cancellable, light_cb,
                                                 g_object_ref (self));
 
     if ((self->paint_flags & CC_BACKGROUND_PAINT_DARK) && has_dark)
-        cc_background_item_get_thumbnail_async (self->item, self->thumbnail_factory, self->width, self->height,
+        cc_background_item_get_thumbnail_async (self->item, NULL, self->width, self->height,
                                                 self->scale_factor, TRUE, self->cancellable, dark_cb,
                                                 g_object_ref (self));
 }
@@ -116,7 +114,6 @@ cc_background_paintable_dispose (GObject *object)
     g_clear_object (&self->cancellable);
 
     g_clear_object (&self->item);
-    g_clear_object (&self->thumbnail_factory);
     g_clear_object (&self->texture);
     g_clear_object (&self->dark_texture);
 
@@ -129,10 +126,6 @@ cc_background_paintable_get_property (GObject *object, guint prop_id, GValue *va
     CcBackgroundPaintable *self = CC_BACKGROUND_PAINTABLE (object);
 
     switch (prop_id) {
-    case PROP_THUMBNAIL_FACTORY:
-        g_value_set_object (value, self->thumbnail_factory);
-        break;
-
     case PROP_ITEM:
         g_value_set_object (value, self->item);
         break;
@@ -169,10 +162,6 @@ cc_background_paintable_set_property (GObject *object, guint prop_id, const GVal
     int scale_factor;
 
     switch (prop_id) {
-    case PROP_THUMBNAIL_FACTORY:
-        g_set_object (&self->thumbnail_factory, g_value_get_object (value));
-        break;
-
     case PROP_ITEM:
         g_set_object (&self->item, g_value_get_object (value));
         break;
@@ -217,10 +206,6 @@ cc_background_paintable_class_init (CcBackgroundPaintableClass *klass)
     object_class->dispose = cc_background_paintable_dispose;
     object_class->get_property = cc_background_paintable_get_property;
     object_class->set_property = cc_background_paintable_set_property;
-
-    properties[PROP_THUMBNAIL_FACTORY] =
-        g_param_spec_object ("thumbnail-factory", NULL, NULL, GNOME_DESKTOP_TYPE_THUMBNAIL_FACTORY,
-                             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
 
     properties[PROP_ITEM] = g_param_spec_object ("item", NULL, NULL, CC_TYPE_BACKGROUND_ITEM,
                                                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
@@ -350,19 +335,15 @@ on_container_root_cb (GtkWidget *container, GParamSpec *pspec, CcBackgroundPaint
     update_cache (self);
 }
 
-/* Workaround for a typo in libgnome-desktop, see gnome-desktop!160 */
-#define G_TYPE_INSTANCE_CHECK_TYPE G_TYPE_CHECK_INSTANCE_TYPE
-
 CcBackgroundPaintable *
-cc_background_paintable_new (GnomeDesktopThumbnailFactory *thumbnail_factory, CcBackgroundItem *item,
+cc_background_paintable_new (gpointer thumbnail_factory, CcBackgroundItem *item,
                              CcBackgroundPaintFlags paint_flags, int width, int height, GtkWidget *container)
 {
     CcBackgroundPaintable *self;
-    g_return_val_if_fail (GNOME_DESKTOP_IS_THUMBNAIL_FACTORY (thumbnail_factory), NULL);
     g_return_val_if_fail (CC_IS_BACKGROUND_ITEM (item), NULL);
     g_return_val_if_fail (GTK_IS_WIDGET (container), NULL);
 
-    self = g_object_new (CC_TYPE_BACKGROUND_PAINTABLE, "thumbnail-factory", thumbnail_factory, "item", item,
+    self = g_object_new (CC_TYPE_BACKGROUND_PAINTABLE, "item", item,
                          "paint-flags", paint_flags, "width", width, "height", height, NULL);
 
     /* We will wait until the container is rooted, as otherwise the scale-factor can't

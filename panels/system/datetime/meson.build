@@ -1,4 +1,4 @@
-desktop = 'gnome-datetime-panel.desktop'
+desktop = 'hypr-datetime-panel.desktop'
 i18n.merge_file(
   type: 'desktop',
   input: desktop + '.in',

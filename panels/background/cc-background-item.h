@@ -22,8 +22,8 @@
 #include <gdesktop-enums.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib-object.h>
-#include <gnome-bg/gnome-bg.h>
-#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
@@ -38,17 +38,13 @@ typedef enum {
     CC_BACKGROUND_ITEM_HAS_URI_DARK = 1 << 5
 } CcBackgroundItemFlags;
 
-#define CC_BACKGROUND_ITEM_HAS_ALL                                                                                     \
-    (CC_BACKGROUND_ITEM_HAS_SHADING & CC_BACKGROUND_ITEM_HAS_PLACEMENT & CC_BACKGROUND_ITEM_HAS_PCOLOR                 \
-     & CC_BACKGROUND_ITEM_HAS_SCOLOR & CC_BACKGROUND_ITEM_HAS_FNAME)
-
 CcBackgroundItem *cc_background_item_new (const char *uri);
 CcBackgroundItem *cc_background_item_copy (CcBackgroundItem *item);
 gboolean cc_background_item_load (CcBackgroundItem *item, GFileInfo *info);
 gboolean cc_background_item_changes_with_time (CcBackgroundItem *item);
 gboolean cc_background_item_has_dark_version (CcBackgroundItem *item);
 
-void cc_background_item_get_thumbnail_async (CcBackgroundItem *item, GnomeDesktopThumbnailFactory *thumbs, int width,
+void cc_background_item_get_thumbnail_async (CcBackgroundItem *item, gpointer thumbs, int width,
                                              int height, int scale_factor, gboolean dark, GCancellable *cancellable,
                                              GAsyncReadyCallback callback, gpointer user_data);
 GdkPixbuf *cc_background_item_get_thumbnail_finish (CcBackgroundItem *item, GAsyncResult *result, GError **error);

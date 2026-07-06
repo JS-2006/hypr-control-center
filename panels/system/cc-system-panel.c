@@ -129,7 +129,7 @@ cc_system_panel_class_init (CcSystemPanelClass *klass)
 {
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-    gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/control-center/system/cc-system-panel.ui");
+    gtk_widget_class_set_template_from_resource (widget_class, "/org/hypr/Settings/system/cc-system-panel.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcSystemPanel, about_row);
     gtk_widget_class_bind_template_child (widget_class, CcSystemPanel, datetime_row);

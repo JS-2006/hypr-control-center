@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/control-center/universal-access">
+  <gresource prefix="/org/hypr/Settings/universal-access">
     <file preprocess="xml-stripblanks">cc-cursor-size-page.ui</file>
     <file preprocess="xml-stripblanks">cc-ua-panel.ui</file>
     <file preprocess="xml-stripblanks">cc-ua-hearing-page.ui</file>

@@ -157,7 +157,7 @@ cc_notifications_panel_class_init (CcNotificationsPanelClass *klass)
     object_class->finalize = cc_notifications_panel_finalize;
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/notifications/cc-notifications-panel.ui");
+                                                 "/org/hypr/Settings/notifications/cc-notifications-panel.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcNotificationsPanel, app_listbox);
     gtk_widget_class_bind_template_child (widget_class, CcNotificationsPanel, lock_screen_row);

@@ -212,7 +212,7 @@ cc_wwan_details_dialog_class_init (CcWwanDetailsDialogClass *klass)
     g_type_ensure (CC_TYPE_LIST_ROW);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/wwan/cc-wwan-details-dialog.ui");
+                                                 "/org/hypr/Settings/wwan/cc-wwan-details-dialog.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcWwanDetailsDialog, device_identifier);
     gtk_widget_class_bind_template_child (widget_class, CcWwanDetailsDialog, device_model);

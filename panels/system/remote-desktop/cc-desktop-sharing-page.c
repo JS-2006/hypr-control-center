@@ -545,7 +545,7 @@ cc_desktop_sharing_page_class_init (CcDesktopSharingPageClass *klass)
     object_class->dispose = cc_desktop_sharing_page_dispose;
 
     gtk_widget_class_set_template_from_resource (
-        widget_class, "/org/gnome/control-center/system/remote-desktop/cc-desktop-sharing-page.ui");
+        widget_class, "/org/hypr/Settings/system/remote-desktop/cc-desktop-sharing-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcDesktopSharingPage, toast_overlay);
 

@@ -156,9 +156,6 @@ template $CcDateTimePage: Adw.NavigationPage {
           Adw.ComboRow week_start_day_row {
             title: _("F_irst Day of the Week");
             use-underline: true;
-            model: EnumList {
-              enum-type: typeof<$GDesktopWeekday>;
-            };
           }
         }
 
@@ -208,7 +205,7 @@ GridView month_grid {
   ]
 
   factory: BuilderListItemFactory {
-    resource: "/org/gnome/control-center/system/datetime/cc-month-row.ui";
+    resource: "/org/hypr/Settings/system/datetime/cc-month-row.ui";
   };
 
   model: SingleSelection month_model {

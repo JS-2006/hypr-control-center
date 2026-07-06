@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/control-center/wwan">
+  <gresource prefix="/org/hypr/Settings/wwan">
     <file preprocess="xml-stripblanks">cc-wwan-panel.ui</file>
     <file preprocess="xml-stripblanks">cc-wwan-device-page.ui</file>
     <file preprocess="xml-stripblanks">cc-wwan-mode-dialog.ui</file>

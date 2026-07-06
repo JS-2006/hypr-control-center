@@ -1,0 +1,17 @@
+#pragma once
+
+typedef enum {
+  GSD_POWER_BUTTON_ACTION_INTERACTIVE = 1,
+  GSD_POWER_BUTTON_ACTION_SUSPEND = 2,
+  GSD_POWER_BUTTON_ACTION_HIBERNATE = 3,
+  GSD_POWER_BUTTON_ACTION_NOTHING = 4,
+} GsdPowerButtonAction;
+
+typedef GsdPowerButtonAction GsdPowerButtonActionType;
+
+typedef enum {
+  GSD_POWER_ACTION_NOTHING = 0,
+  GSD_POWER_ACTION_SUSPEND = 1,
+  GSD_POWER_ACTION_HIBERNATE = 2,
+  GSD_POWER_ACTION_SHUTDOWN = 3,
+} GsdPowerAction;

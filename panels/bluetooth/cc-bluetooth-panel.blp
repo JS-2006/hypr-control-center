@@ -76,8 +76,7 @@ template $CcBluetoothPanel: $CcPanel {
       StackPage {
         name: "bluetooth-page";
 
-        child: $BluetoothSettingsWidget settings_widget {
-          panel-changed => $panel_changed_cb(template);
+        child: $CcBtDeviceWidget settings_widget {
           adapter-status-changed => $adapter_status_changed_cb(template);
         };
       }

@@ -352,7 +352,7 @@ cc_users_page_class_init (CcUsersPageClass *klass)
     g_type_ensure (CC_TYPE_USER_PAGE);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/system/users/cc-users-page.ui");
+                                                 "/org/hypr/Settings/system/users/cc-users-page.ui");
 
     widget_class->map = cc_users_page_map;
 

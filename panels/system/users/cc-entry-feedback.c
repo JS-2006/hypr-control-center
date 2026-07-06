@@ -189,7 +189,7 @@ cc_entry_feedback_class_init (CcEntryFeedbackClass *klass)
     object_class->set_property = cc_entry_feedback_set_property;
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/system/users/cc-entry-feedback.ui");
+                                                 "/org/hypr/Settings/system/users/cc-entry-feedback.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcEntryFeedback, image);
     gtk_widget_class_bind_template_child (widget_class, CcEntryFeedback, label);

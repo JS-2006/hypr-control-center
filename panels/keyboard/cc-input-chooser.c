@@ -20,8 +20,7 @@
 #include <glib/gi18n.h>
 #include <locale.h>
 
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-languages.h>
+#include "stub-languages.h"
 
 #include "cc-common-language.h"
 #include "cc-input-chooser.h"

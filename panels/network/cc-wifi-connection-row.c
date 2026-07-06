@@ -16,7 +16,6 @@
  */
 
 #include "cc-wifi-connection-row.h"
-#include "cc-qr-code.h"
 #include <config.h>
 #include <glib/gi18n.h>
 
@@ -39,7 +38,6 @@ struct _CcWifiConnectionRow {
     GtkImage *encrypted_icon;
     GtkButton *options_button;
     GtkButton *forget_button;
-    GtkButton *qr_code_button;
     GtkImage *strength_icon;
 };
 
@@ -71,7 +69,6 @@ static GParamSpec *props[PROP_LAST];
 
 static void configure_clicked_cb (CcWifiConnectionRow *self);
 static void forget_clicked_cb (CcWifiConnectionRow *self);
-static void qr_code_clicked_cb (CcWifiConnectionRow *self);
 
 static NMAccessPointSecurity
 get_access_point_security (NMAccessPoint *ap)
@@ -222,8 +219,7 @@ update_ui (CcWifiConnectionRow *self)
     gtk_widget_set_visible (GTK_WIDGET (self->connecting_spinner), connecting);
     adw_action_row_set_subtitle (ADW_ACTION_ROW (self), active ? _("Connected") : "");
     gtk_widget_set_visible (GTK_WIDGET (self->options_button), active || connecting || self->known_connection);
-    gtk_widget_set_visible (GTK_WIDGET (self->qr_code_button),
-                            (active || self->known_connection) && is_qr_code_supported (self->connection));
+    (void) self;
 
     if (security != NM_AP_SEC_UNKNOWN && security != NM_AP_SEC_NONE && security != NM_AP_SEC_OWE
         && security != NM_AP_SEC_OWE_TM) {
@@ -412,15 +408,13 @@ cc_wifi_connection_row_class_init (CcWifiConnectionRowClass *klass)
     gtk_widget_class_bind_template_child (widget_class, CcWifiConnectionRow, encrypted_icon);
     gtk_widget_class_bind_template_child (widget_class, CcWifiConnectionRow, options_button);
     gtk_widget_class_bind_template_child (widget_class, CcWifiConnectionRow, forget_button);
-    gtk_widget_class_bind_template_child (widget_class, CcWifiConnectionRow, qr_code_button);
     gtk_widget_class_bind_template_child (widget_class, CcWifiConnectionRow, strength_icon);
 
     gtk_widget_class_bind_template_callback (widget_class, configure_clicked_cb);
     gtk_widget_class_bind_template_callback (widget_class, forget_clicked_cb);
-    gtk_widget_class_bind_template_callback (widget_class, qr_code_clicked_cb);
 
     props[PROP_CHECKABLE] = g_param_spec_boolean ("checkable", NULL, NULL, FALSE,
-                                                  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
+                                                   G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
 
     props[PROP_CHECKED] =
         g_param_spec_boolean ("checked", NULL, NULL, FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
@@ -457,12 +451,6 @@ static void
 forget_clicked_cb (CcWifiConnectionRow *self)
 {
     g_signal_emit_by_name (self, "forget");
-}
-
-static void
-qr_code_clicked_cb (CcWifiConnectionRow *self)
-{
-    g_signal_emit_by_name (self, "show-qr-code");
 }
 
 void

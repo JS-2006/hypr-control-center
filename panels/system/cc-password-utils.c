@@ -69,7 +69,7 @@ cc_generate_password (void)
     static const int number_of_password_words = 5;
     int number_of_file_words;
 
-    ascii_lines = get_ascii_lines_from_uri ("resource://org/gnome/control-center/system/wordlist.txt");
+    ascii_lines = get_ascii_lines_from_uri ("resource://org/hypr/Settings/system/wordlist.txt");
 
     if (!ascii_lines)
         return NULL;

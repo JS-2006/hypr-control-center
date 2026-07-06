@@ -467,7 +467,7 @@ cc_add_user_dialog_class_init (CcAddUserDialogClass *klass)
     object_class->finalize = cc_add_user_dialog_finalize;
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/system/users/cc-add-user-dialog.ui");
+                                                 "/org/hypr/Settings/system/users/cc-add-user-dialog.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcAddUserDialog, add_button);
     gtk_widget_class_bind_template_child (widget_class, CcAddUserDialog, account_type_switch);

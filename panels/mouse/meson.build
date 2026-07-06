@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
   type: 'desktop',
@@ -26,7 +26,7 @@ blueprints = custom_target(
   command: [blueprint_compiler, 'batch-compile', '@OUTDIR@', '@CURRENT_SOURCE_DIR@', '@INPUT@']
 )
 
-common_sources = gnome.compile_resources(
+resources = gnome.compile_resources(
   'cc-' + cappletname + '-resources',
   cappletname + '.gresource.xml',
   c_name: 'cc_' + cappletname,
@@ -34,35 +34,21 @@ common_sources = gnome.compile_resources(
   dependencies: blueprints,
 )
 
-sources = common_sources + files(
+sources = resources + files(
   'cc-mouse-panel.c',
   'cc-mouse-test.c',
+  'hypr-input-helper.c',
 )
 
 deps = common_deps + [
-  gnome_settings_dep,
-  libdevice_dep,
+  generates_sources_dep,
+  hypr_backend_dep,
 ]
 
 panels_libs += static_library(
   cappletname + '-properties',
   sources: sources,
-  include_directories: top_inc,
-  dependencies: deps,
-  c_args: cflags
-)
-
-test_name = 'test-gnome-mouse-test'
-
-sources = common_sources + files(
-  'cc-mouse-test.c',
-  test_name + '.c'
-)
-
-executable(
-  test_name,
-  sources,
-  include_directories: top_inc,
+  include_directories: [top_inc, common_inc],
   dependencies: deps,
   c_args: cflags
 )

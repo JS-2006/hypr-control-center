@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/control-center/privacy">
+  <gresource prefix="/org/hypr/Settings/privacy">
     <file preprocess="xml-stripblanks">bolt/cc-bolt-device-dialog.ui</file>
     <file preprocess="xml-stripblanks">bolt/cc-bolt-device-entry.ui</file>
     <file preprocess="xml-stripblanks">bolt/cc-bolt-page.ui</file>

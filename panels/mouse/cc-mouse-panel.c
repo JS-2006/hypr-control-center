@@ -32,8 +32,7 @@
 #include "cc-mouse-panel.h"
 #include "cc-mouse-resources.h"
 #include "cc-mouse-test.h"
-#include "gsd-device-manager.h"
-#include "gsd-input-helper.h"
+#include "hypr-input-helper.h"
 
 struct _CcMousePanel {
     CcPanel parent_instance;
@@ -345,20 +344,6 @@ setup_dialog (CcMousePanel *self)
     setup_title_stack (self);
 }
 
-/* Callback issued when a button is clicked on the dialog */
-static void
-device_changed (CcMousePanel *self)
-{
-    self->have_touchpad = touchpad_is_present ();
-    self->have_pointingstick = pointingstick_is_present ();
-
-    setup_title_stack (self);
-
-    self->have_mouse = mouse_is_present ();
-    gtk_widget_set_visible (GTK_WIDGET (self->mouse_group), self->have_mouse);
-    gtk_widget_set_visible (GTK_WIDGET (self->touchpad_toggle_row), can_disable_touchpad (self));
-}
-
 static void
 cc_mouse_panel_direction_changed (GtkWidget *widget, GtkTextDirection previous_direction)
 {
@@ -397,8 +382,6 @@ test_button_row_activated_cb (CcMousePanel *self)
 static void
 cc_mouse_panel_init (CcMousePanel *self)
 {
-    GsdDeviceManager *device_manager;
-
     g_resources_register (cc_mouse_get_resource ());
 
     gtk_widget_init_template (GTK_WIDGET (self));
@@ -406,10 +389,6 @@ cc_mouse_panel_init (CcMousePanel *self)
     self->mouse_settings = g_settings_new ("org.gnome.desktop.peripherals.mouse");
     self->touchpad_settings = g_settings_new ("org.gnome.desktop.peripherals.touchpad");
     self->pointingstick_settings = g_settings_new ("org.gnome.desktop.peripherals.pointingstick");
-
-    device_manager = gsd_device_manager_get ();
-    g_signal_connect_object (device_manager, "device-added", G_CALLBACK (device_changed), self, G_CONNECT_SWAPPED);
-    g_signal_connect_object (device_manager, "device-removed", G_CALLBACK (device_changed), self, G_CONNECT_SWAPPED);
 
     self->have_mouse = mouse_is_present ();
     self->have_touchpad = touchpad_is_present ();
@@ -436,7 +415,7 @@ cc_mouse_panel_class_init (CcMousePanelClass *klass)
     g_type_ensure (CC_TYPE_LIST_ROW_INFO_BUTTON);
     g_type_ensure (CC_TYPE_MOUSE_TEST);
 
-    gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/control-center/mouse/cc-mouse-panel.ui");
+    gtk_widget_class_set_template_from_resource (widget_class, "/org/hypr/Settings/mouse/cc-mouse-panel.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcMousePanel, mouse_accel_switch);
     gtk_widget_class_bind_template_child (widget_class, CcMousePanel, mouse_group);

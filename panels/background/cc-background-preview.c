@@ -18,12 +18,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <libgnome-desktop/gnome-desktop-thumbnail.h>
-
 #include "cc-background-paintable.h"
 #include "cc-background-preview.h"
 
-#define THUMBNAIL_WIDTH 256 /* No use asking for more, gnome_bg caps at 256 */
+#define THUMBNAIL_WIDTH 256
 #define THUMBNAIL_HEIGHT (THUMBNAIL_WIDTH * 3 / 4)
 
 struct _CcBackgroundPreview {
@@ -32,8 +30,6 @@ struct _CcBackgroundPreview {
     GtkWidget *picture;
     GtkWidget *light_dark_window;
     GtkWidget *dark_window;
-
-    GnomeDesktopThumbnailFactory *thumbnail_factory;
 
     gboolean is_dark;
     CcBackgroundItem *item;
@@ -68,7 +64,6 @@ cc_background_preview_finalize (GObject *object)
     CcBackgroundPreview *self = (CcBackgroundPreview *) object;
 
     g_clear_object (&self->item);
-    g_clear_object (&self->thumbnail_factory);
 
     G_OBJECT_CLASS (cc_background_preview_parent_class)->finalize (object);
 }
@@ -219,8 +214,6 @@ static void
 cc_background_preview_init (CcBackgroundPreview *self)
 {
     gtk_widget_init_template (GTK_WIDGET (self));
-
-    self->thumbnail_factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_LARGE);
 }
 
 CcBackgroundItem *
@@ -245,7 +238,7 @@ cc_background_preview_set_item (CcBackgroundPreview *self, CcBackgroundItem *ite
 
     paint_flags = self->is_dark ? CC_BACKGROUND_PAINT_DARK : CC_BACKGROUND_PAINT_LIGHT;
 
-    paintable = cc_background_paintable_new (self->thumbnail_factory, item, paint_flags, THUMBNAIL_WIDTH,
+    paintable = cc_background_paintable_new (NULL, item, paint_flags, THUMBNAIL_WIDTH,
                                              THUMBNAIL_HEIGHT, GTK_WIDGET (self));
 
     gtk_picture_set_paintable (GTK_PICTURE (self->picture), GDK_PAINTABLE (paintable));

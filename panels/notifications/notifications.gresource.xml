@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/control-center/notifications">
+  <gresource prefix="/org/hypr/Settings/notifications">
     <file preprocess="xml-stripblanks">cc-app-notifications-page.ui</file>
     <file preprocess="xml-stripblanks">cc-notifications-panel.ui</file>
   </gresource>

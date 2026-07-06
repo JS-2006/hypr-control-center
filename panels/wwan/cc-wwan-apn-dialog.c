@@ -377,7 +377,7 @@ cc_wwan_apn_dialog_class_init (CcWwanApnDialogClass *klass)
 
     g_object_class_install_properties (object_class, N_PROPS, properties);
 
-    gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/control-center/wwan/cc-wwan-apn-dialog.ui");
+    gtk_widget_class_set_template_from_resource (widget_class, "/org/hypr/Settings/wwan/cc-wwan-apn-dialog.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcWwanApnDialog, add_button);
     gtk_widget_class_bind_template_child (widget_class, CcWwanApnDialog, apn_edit_view);

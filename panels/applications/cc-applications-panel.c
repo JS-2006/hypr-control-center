@@ -98,8 +98,6 @@ struct _CcApplicationsPanel {
     GSettings *location_settings;
     GSettings *privacy_settings;
     GSettings *search_settings;
-    GSettings *global_shortcuts_app_settings;
-
     GtkButton *install_button;
 
     AdwPreferencesGroup *permissions_group;
@@ -118,7 +116,6 @@ struct _CcApplicationsPanel {
     AdwSwitchRow *shortcuts_row;
     AdwSwitchRow *microphone_row;
     CcListRow *no_microphone_row;
-    CcListRow *global_shortcuts_row;
     AdwPreferencesGroup *required_permissions_group;
     CcListRow *builtin_row;
     AdwPreferencesPage *builtin_page;
@@ -655,22 +652,6 @@ location_cb (CcApplicationsPanel *self)
 {
     if (self->current_portal_app_id)
         set_location_allowed (self, adw_switch_row_get_active (self->location_row));
-}
-
-static void
-dialog_closed_cb (CcApplicationsPanel *self)
-{
-    update_usage_section (self, self->current_app_info);
-}
-
-static void
-global_shortcuts_cb (CcApplicationsPanel *self)
-{
-    AdwDialog *shortcut_dialog;
-
-    shortcut_dialog = ADW_DIALOG (cc_application_shortcut_dialog_new (self->current_app_id));
-    adw_dialog_present (shortcut_dialog, GTK_WIDGET (cc_panel_get_toplevel (CC_PANEL (self))));
-    g_signal_connect_object (shortcut_dialog, "closed", G_CALLBACK (dialog_closed_cb), self, G_CONNECT_SWAPPED);
 }
 
 /* --- permissions section --- */
@@ -1374,33 +1355,11 @@ update_app_sizes (CcApplicationsPanel *self, const gchar *app_id)
     update_data_row (self, app_id);
 }
 
-static gboolean
-update_global_shortcuts_section (CcApplicationsPanel *self)
-{
-    int global_shortcuts_count;
-    g_autoptr(GVariant) shortcuts = NULL;
-    g_autofree gchar *n_actions = NULL;
-
-    shortcuts = g_settings_get_value (self->global_shortcuts_app_settings, "shortcuts");
-    global_shortcuts_count = g_variant_n_children (shortcuts);
-    gtk_widget_set_visible (GTK_WIDGET (self->global_shortcuts_row), global_shortcuts_count != 0);
-
-    /* TRANSLATORS: %u is the number of global shortcut actions. */
-    n_actions = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE, "%u action", "%u actions", global_shortcuts_count),
-                                 global_shortcuts_count);
-
-    cc_list_row_set_secondary_label (self->global_shortcuts_row, n_actions);
-
-    return global_shortcuts_count != 0;
-}
-
 static void
 update_usage_section (CcApplicationsPanel *self, GAppInfo *info)
 {
     g_autofree gchar *portal_app_id = get_portal_app_id (info);
-    gboolean has_builtin = FALSE, has_global_shortcuts;
-    g_autofree char *app_id = get_app_id (info);
-    g_autofree char *app_path;
+    gboolean has_builtin = FALSE;
 
     if (portal_app_id != NULL)
         update_app_sizes (self, portal_app_id);
@@ -1409,13 +1368,7 @@ update_usage_section (CcApplicationsPanel *self, GAppInfo *info)
     has_builtin = add_static_permissions (self, info, portal_app_id);
     gtk_widget_set_visible (GTK_WIDGET (self->builtin_row), has_builtin);
 
-    g_clear_object (&self->global_shortcuts_app_settings);
-    app_path = g_strdup_printf (GLOBAL_SHORTCUTS_PATH "%s/", app_id);
-    self->global_shortcuts_app_settings = g_settings_new_with_path (GLOBAL_SHORTCUTS_APP_SCHEMA, app_path);
-
-    has_global_shortcuts = update_global_shortcuts_section (self);
-
-    gtk_widget_set_visible (GTK_WIDGET (self->required_permissions_group), has_global_shortcuts || has_builtin);
+    gtk_widget_set_visible (GTK_WIDGET (self->required_permissions_group), has_builtin);
 
     gtk_widget_set_visible (GTK_WIDGET (self->general_group), portal_app_id || has_builtin);
 
@@ -1774,7 +1727,6 @@ cc_applications_panel_class_init (CcApplicationsPanelClass *klass)
     gtk_widget_class_bind_template_child (widget_class, CcApplicationsPanel, builtin_page);
     gtk_widget_class_bind_template_child (widget_class, CcApplicationsPanel, builtin_list);
     gtk_widget_class_bind_template_child (widget_class, CcApplicationsPanel, storage_page_cache_row);
-    gtk_widget_class_bind_template_child (widget_class, CcApplicationsPanel, global_shortcuts_row);
     gtk_widget_class_bind_template_child (widget_class, CcApplicationsPanel, camera_row);
     gtk_widget_class_bind_template_child (widget_class, CcApplicationsPanel, clear_cache_button_row);
     gtk_widget_class_bind_template_child (widget_class, CcApplicationsPanel, storage_page_data_row);
@@ -1823,7 +1775,6 @@ cc_applications_panel_class_init (CcApplicationsPanelClass *klass)
     gtk_widget_class_bind_template_callback (widget_class, clear_cache_cb);
     gtk_widget_class_bind_template_callback (widget_class, open_software_cb);
     gtk_widget_class_bind_template_callback (widget_class, handler_reset_cb);
-    gtk_widget_class_bind_template_callback (widget_class, global_shortcuts_cb);
     gtk_widget_class_bind_template_callback (widget_class, on_launch_button_clicked_cb);
     gtk_widget_class_bind_template_callback (widget_class, on_app_search_entry_activated_cb);
     gtk_widget_class_bind_template_callback (widget_class, on_app_search_entry_search_changed_cb);

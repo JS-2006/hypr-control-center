@@ -28,18 +28,6 @@ template $CcWifiConnectionRow: Adw.ActionRow {
     margin-end: 6;
   }
 
-  [suffix]
-  Button qr_code_button {
-    name: "qr_code_button";
-    icon-name: "qr-code-symbolic";
-    valign: center;
-    tooltip-text: _("Share Network");
-    clicked => $qr_code_clicked_cb(template);
-
-    styles [
-      "flat",
-    ]
-  }
 
   [suffix]
   Button options_button {

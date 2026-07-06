@@ -587,7 +587,7 @@ cc_user_page_class_init (CcUserPageClass *klass)
     g_type_ensure (CC_TYPE_PERMISSION_INFOBAR);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/system/users/cc-user-page.ui");
+                                                 "/org/hypr/Settings/system/users/cc-user-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcUserPage, avatar);
     gtk_widget_class_bind_template_child (widget_class, CcUserPage, avatar_edit_button);

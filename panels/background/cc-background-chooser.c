@@ -23,7 +23,6 @@
 
 #include <adwaita.h>
 #include <glib/gi18n.h>
-#include <libgnome-desktop/gnome-desktop-thumbnail.h>
 
 #include "bg-recent-source.h"
 #include "bg-wallpapers-source.h"
@@ -47,8 +46,6 @@ struct _CcBackgroundChooser {
     BgRecentSource *recent_source;
 
     CcBackgroundItem *active_item;
-
-    GnomeDesktopThumbnailFactory *thumbnail_factory;
 
     AdwToastOverlay *toast_overlay;
     AdwToast *toast;
@@ -201,7 +198,7 @@ create_widget_func (gpointer model_item, gpointer user_data)
 
     self = g_object_get_data (G_OBJECT (source), "background-chooser");
 
-    paintable = cc_background_paintable_new (self->thumbnail_factory, item, CC_BACKGROUND_PAINT_LIGHT_DARK,
+    paintable = cc_background_paintable_new (NULL, item, CC_BACKGROUND_PAINT_LIGHT_DARK,
                                              THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, GTK_WIDGET (self));
 
     picture = gtk_picture_new_for_paintable (GDK_PAINTABLE (paintable));
@@ -348,7 +345,6 @@ cc_background_chooser_finalize (GObject *object)
 
     g_clear_object (&self->recent_source);
     g_clear_object (&self->wallpapers_source);
-    g_clear_object (&self->thumbnail_factory);
 
     G_OBJECT_CLASS (cc_background_chooser_parent_class)->finalize (object);
 }
@@ -388,7 +384,6 @@ cc_background_chooser_init (CcBackgroundChooser *self)
     self->recent_source = bg_recent_source_new ();
     self->wallpapers_source = bg_wallpapers_source_new ();
 
-    self->thumbnail_factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_LARGE);
     g_object_set_data (G_OBJECT (self->recent_source), "background-chooser", self);
     g_object_set_data (G_OBJECT (self->wallpapers_source), "background-chooser", self);
 

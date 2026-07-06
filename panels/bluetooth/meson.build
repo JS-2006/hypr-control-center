@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
   type: 'desktop',
@@ -27,6 +27,7 @@ blueprints = custom_target(
 
 sources = files(
   'cc-bluetooth-panel.c',
+  'cc-bt-device-widget.c',
 )
 
 sources += gnome.compile_resources(
@@ -37,7 +38,7 @@ sources += gnome.compile_resources(
   dependencies: blueprints,
 )
 
-deps = common_deps + [gnome_bluetooth_dep]
+deps = common_deps
 
 panels_libs += static_library(
   cappletname,

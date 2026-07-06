@@ -35,6 +35,7 @@
 #include <time.h>
 
 #include "cc-application.h"
+#include "cc-config.h"
 #include "cc-panel-list.h"
 #include "cc-panel-loader.h"
 #include "cc-panel.h"
@@ -43,7 +44,7 @@
 
 #define MOUSE_BACK_BUTTON 8
 
-#define DEFAULT_WINDOW_ICON_NAME "gnome-control-center"
+#define DEFAULT_WINDOW_ICON_NAME "hypr-control-center"
 
 struct _CcWindow {
     AdwApplicationWindow parent;
@@ -66,7 +67,6 @@ struct _CcWindow {
     CcShellModel *store;
 
     CcPanel *active_panel;
-    GSettings *settings;
 
     CcPanelListView previous_list_view;
 };
@@ -88,12 +88,13 @@ load_window_state (CcWindow *self)
     gint current_height = -1;
     gboolean maximized = FALSE;
 
-    g_settings_get (self->settings, "window-state", "(iib)", &current_width, &current_height, &maximized);
-
-    if (current_width != -1 && current_height != -1)
-        gtk_window_set_default_size (GTK_WINDOW (self), current_width, current_height);
-    if (maximized)
-        gtk_window_maximize (GTK_WINDOW (self));
+    if (cc_config_get_window_state (&current_width, &current_height, &maximized))
+    {
+        if (current_width != -1 && current_height != -1)
+            gtk_window_set_default_size (GTK_WINDOW (self), current_width, current_height);
+        if (maximized)
+            gtk_window_maximize (GTK_WINDOW (self));
+    }
 }
 
 static gboolean
@@ -130,7 +131,7 @@ activate_panel (CcWindow *self, const gchar *id, GVariant *parameters, const gch
 
     g_debug ("Time to open panel '%s': %lfs", name, elapsed_time);
 
-    g_settings_set_string (self->settings, "last-panel", id);
+    cc_config_set_string ("last-panel", id);
 
     CC_RETURN (TRUE);
 }
@@ -527,7 +528,7 @@ cc_window_unmap (GtkWidget *widget)
     maximized = gtk_window_is_maximized (GTK_WINDOW (self));
     gtk_window_get_default_size (GTK_WINDOW (self), &width, &height);
 
-    g_settings_set (self->settings, "window-state", "(iib)", width, height, maximized);
+    cc_config_set_window_state (width, height, maximized);
 
     GTK_WIDGET_CLASS (cc_window_parent_class)->unmap (widget);
 }
@@ -581,7 +582,7 @@ maybe_load_last_panel (CcWindow *self)
 {
     g_autofree char *id = NULL;
 
-    id = g_settings_get_string (self->settings, "last-panel");
+    id = cc_config_get_string ("last-panel");
     if (cc_panel_list_get_current_panel (self->panel_list))
         return;
 
@@ -634,8 +635,6 @@ cc_window_finalize (GObject *object)
         self->previous_panels = NULL;
     }
 
-    g_clear_object (&self->settings);
-
     G_OBJECT_CLASS (cc_window_parent_class)->finalize (object);
 }
 
@@ -685,7 +684,7 @@ cc_window_class_init (CcWindowClass *klass)
         object_class, PROP_COLLAPSED,
         g_param_spec_boolean ("collapsed", NULL, NULL, FALSE, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
-    gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Settings/gtk/cc-window.ui");
+    gtk_widget_class_set_template_from_resource (widget_class, "/org/hypr/Settings/gtk/cc-window.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcWindow, break_point);
     gtk_widget_class_bind_template_child (widget_class, CcWindow, split_view);
@@ -714,7 +713,6 @@ cc_window_init (CcWindow *self)
 {
     gtk_widget_init_template (GTK_WIDGET (self));
 
-    self->settings = g_settings_new ("org.gnome.Settings");
     self->previous_panels = g_queue_new ();
     self->previous_list_view = cc_panel_list_get_view (self->panel_list);
 

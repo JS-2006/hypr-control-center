@@ -251,7 +251,7 @@ cc_app_notifications_page_class_init (CcAppNotificationsPageClass *klass)
     object_class->dispose = cc_app_notifications_page_dispose;
 
     gtk_widget_class_set_template_from_resource (
-        widget_class, "/org/gnome/control-center/notifications/cc-app-notifications-page.ui");
+        widget_class, "/org/hypr/Settings/notifications/cc-app-notifications-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcAppNotificationsPage, notifications_row);
     gtk_widget_class_bind_template_child (widget_class, CcAppNotificationsPage, sound_alerts_row);

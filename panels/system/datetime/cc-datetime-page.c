@@ -42,8 +42,8 @@
 #include <string.h>
 
 #include <glib/gi18n.h>
-#include <libgnome-desktop/gnome-languages.h>
-#include <libgnome-desktop/gnome-wall-clock.h>
+#include "stub-languages.h"
+#include "stub-wall-clock.h"
 #include <polkit/polkit.h>
 
 /* FIXME: This should be "Etc/GMT" instead */
@@ -733,7 +733,7 @@ cc_date_time_page_class_init (CcDateTimePageClass *klass)
     g_type_ensure (G_DESKTOP_TYPE_WEEKDAY);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/system/datetime/cc-datetime-page.ui");
+                                                 "/org/hypr/Settings/system/datetime/cc-datetime-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcDateTimePage, auto_datetime_row);
     gtk_widget_class_bind_template_child (widget_class, CcDateTimePage, auto_timezone_row);

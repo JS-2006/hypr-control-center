@@ -22,8 +22,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-xkb-info.h>
+#include "stub-xkb-info.h"
 
 #include "cc-input-chooser.h"
 #include "cc-input-list-box.h"

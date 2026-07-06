@@ -949,7 +949,7 @@ cc_about_page_class_init (CcAboutPageClass *klass)
     g_type_ensure (CC_TYPE_HOSTNAME_ENTRY);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/gnome/control-center/system/about/cc-about-page.ui");
+                                                 "/org/hypr/Settings/system/about/cc-about-page.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcAboutPage, toast_overlay);
     gtk_widget_class_bind_template_child (widget_class, CcAboutPage, disk_row);

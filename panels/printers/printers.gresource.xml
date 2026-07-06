@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/control-center/printers">
+  <gresource prefix="/org/hypr/Settings/printers">
     <file preprocess="xml-stripblanks">cc-printers-panel.ui</file>
     <file preprocess="xml-stripblanks">pp-new-printer-dialog.ui</file>
     <file preprocess="xml-stripblanks">pp-options-dialog.ui</file>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/hypr/Settings/gtk">
+    <file preprocess="xml-stripblanks">cc-panel.ui</file>
+    <file preprocess="xml-stripblanks">cc-panel-list.ui</file>
+    <file preprocess="xml-stripblanks">cc-window.ui</file>
+    <file>style.css</file>
+  </gresource>
+
+  <!-- Panel icons -->
+  <gresource prefix="/org/hypr/Settings">
+    <file>style.css</file>
+    <file alias="metainfo">appdata/@appid@.metainfo.xml</file>
+    <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
+  </gresource>
+</gresources>

@@ -1,3 +1,9 @@
+wacom_deps = [
+  dependency('libwacom', version: '>= 0.15'),
+]
+gnome_settings_dep = declare_dependency()
+libdevice_dep = declare_dependency()
+
 deps = common_deps + wacom_deps + [
   gnome_settings_dep,
   liblanguage_dep,
@@ -41,7 +47,7 @@ wacom_gresource = gnome.compile_resources(
 )
 
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
          type : 'desktop',

@@ -1,5 +1,5 @@
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
   type: 'desktop',
@@ -17,20 +17,11 @@ install_data(
 
 common_sources = []
 
+common_sources += gdesktop_enums_types
+
 common_sources += gnome.mkenums_simple(
   'cc-background-enum-types',
   sources: ['cc-background-item.h', 'cc-background-paintable.h']
-)
-
-gdesktop_enums_header = files(
-  gsettings_desktop_dep.get_variable(pkgconfig: 'prefix') + '/include/gsettings-desktop-schemas/gdesktop-enums.h'
-)
-
-common_sources += gnome.mkenums_simple(
-  'gdesktop-enums-types',
-  sources: gdesktop_enums_header,
-  identifier_prefix: 'GDesktop',
-  symbol_prefix: 'g_desktop'
 )
 
 ui_sources = files(
@@ -59,6 +50,7 @@ common_sources += gnome.compile_resources(
 )
 
 sources = common_sources + files(
+  'bg-apply.c',
   'bg-recent-source.c',
   'bg-source.c',
   'bg-wallpapers-source.c',
@@ -72,14 +64,13 @@ sources = common_sources + files(
 
 deps = common_deps + [
   gdk_pixbuf_dep,
-  gnome_bg_dep,
+
   libxml_dep,
   dependency('cairo-gobject'),
 ]
 
 cflags += [
   '-DDATADIR="@0@"'.format(control_center_datadir),
-  '-DGNOME_DESKTOP_USE_UNSTABLE_API'
 ]
 
 panels_libs += static_library(

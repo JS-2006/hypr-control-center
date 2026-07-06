@@ -38,7 +38,7 @@ cc_encryption_fingerprint_dialog_class_init (CcEncryptionFingerprintDialogClass 
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
     gtk_widget_class_set_template_from_resource (
-        widget_class, "/org/gnome/control-center/system/remote-desktop/cc-encryption-fingerprint-dialog.ui");
+        widget_class, "/org/hypr/Settings/system/remote-desktop/cc-encryption-fingerprint-dialog.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcEncryptionFingerprintDialog, fingerprint_left_label);
     gtk_widget_class_bind_template_child (widget_class, CcEncryptionFingerprintDialog, fingerprint_right_label);

@@ -617,7 +617,7 @@ cc_wwan_panel_class_init (CcWwanPanelClass *klass)
 
     g_object_class_override_property (object_class, PROP_PARAMETERS, "parameters");
 
-    gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/control-center/wwan/cc-wwan-panel.ui");
+    gtk_widget_class_set_template_from_resource (widget_class, "/org/hypr/Settings/wwan/cc-wwan-panel.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcWwanPanel, toast_overlay);
     gtk_widget_class_bind_template_child (widget_class, CcWwanPanel, data_list_row);

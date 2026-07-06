@@ -27,6 +27,7 @@
 #include <glib/gi18n.h>
 
 #include "cc-application.h"
+#include "cc-config.h"
 #include "cc-log.h"
 #include "cc-object-storage.h"
 #include "cc-panel-loader.h"
@@ -90,7 +91,7 @@ help_activated (GSimpleAction *action, GVariant *parameter, gpointer user_data)
     if (panel)
         uri = cc_panel_get_help_uri (panel);
 
-    launcher = gtk_uri_launcher_new (uri ? uri : "help:gnome-help/prefs");
+    launcher = gtk_uri_launcher_new (uri ? uri : "https://wiki.hypr.land");
     gtk_uri_launcher_launch (launcher, GTK_WINDOW (window), NULL, NULL, NULL);
 }
 
@@ -102,7 +103,7 @@ about_activated (GSimpleAction *action, GVariant *parameter, gpointer user_data)
     AdwDialog *about_dialog;
     const char *developer_name;
 
-    about_dialog = adw_about_dialog_new_from_appdata ("/org/gnome/Settings/metainfo", NULL);
+    about_dialog = adw_about_dialog_new_from_appdata ("/org/hypr/Settings/metainfo", NULL);
     adw_about_dialog_set_version (ADW_ABOUT_DIALOG (about_dialog), VERSION);
     developer_name = adw_about_dialog_get_developer_name (ADW_ABOUT_DIALOG (about_dialog));
     /* Translators should localize the following string which will be displayed in the
@@ -131,7 +132,7 @@ launch_panel_activated (GSimpleAction *action, GVariant *parameter, gpointer use
 
     g_variant_get (parameter, "(&s@av)", &panel_id, &parameters);
 
-    g_debug ("gnome-control-center: 'launch-panel' activated for panel '%s' with %" G_GSIZE_FORMAT " arguments",
+    g_debug ("hypr-control-center: 'launch-panel' activated for panel '%s' with %" G_GSIZE_FORMAT " arguments",
              panel_id, g_variant_n_children (parameters));
 
     g_application_activate (G_APPLICATION (self));
@@ -152,33 +153,14 @@ launch_single_panel_mode_activated (GSimpleAction *action, GVariant *parameter, 
     launch_panel_activated (action, parameter, user_data);
 }
 
-static char **
-get_current_desktops (void)
-{
-    const char *envvar;
-
-    envvar = g_getenv ("XDG_CURRENT_DESKTOP");
-
-    if (!envvar)
-        return g_new0 (char *, 0 + 1);
-
-    return g_strsplit (envvar, G_SEARCHPATH_SEPARATOR_S, 0);
-}
-
 static gboolean
-is_supported_desktop (void)
+is_hyprland_running (void)
 {
-    g_auto(GStrv) desktops = NULL;
-    guint i;
+    const char *signature;
 
-    desktops = get_current_desktops ();
-    for (i = 0; desktops[i] != NULL; i++) {
-        /* This matches OnlyShowIn in gnome-control-center.desktop.in.in */
-        if (g_ascii_strcasecmp (desktops[i], "GNOME") == 0)
-            return TRUE;
-    }
+    signature = g_getenv ("HYPRLAND_INSTANCE_SIGNATURE");
 
-    return FALSE;
+    return signature != NULL && signature[0] != '\0';
 }
 
 static gint
@@ -189,8 +171,8 @@ cc_application_handle_local_options (GApplication *application, GVariantDict *op
         return 0;
     }
 
-    if (!is_supported_desktop ()) {
-        g_printerr ("Running gnome-control-center is only supported under GNOME and Unity, exiting\n");
+    if (!is_hyprland_running ()) {
+        g_printerr ("hypr-control-center requires a running Hyprland session (HYPRLAND_INSTANCE_SIGNATURE not set), exiting\n");
         return 1;
     }
 
@@ -281,6 +263,7 @@ cc_application_startup (GApplication *application)
 {
     CcApplication *self = CC_APPLICATION (application);
     const gchar *help_accels[] = { "F1", NULL };
+    g_autoptr(GError) error = NULL;
 
     g_action_map_add_action_entries (G_ACTION_MAP (self), cc_app_actions, G_N_ELEMENTS (cc_app_actions), self);
 
@@ -290,6 +273,9 @@ cc_application_startup (GApplication *application)
 
     gtk_application_set_accels_for_action (GTK_APPLICATION (application), "app.help", help_accels);
 
+    if (!cc_config_init (&error))
+        g_warning ("Failed to load config: %s", error->message);
+
     self->model = cc_shell_model_new ();
 }
 
@@ -298,6 +284,7 @@ cc_application_finalize (GObject *object)
 {
     /* Destroy the object storage cache when finalizing */
     cc_object_storage_destroy ();
+    cc_config_shutdown ();
 
     G_OBJECT_CLASS (cc_application_parent_class)->finalize (object);
 }

@@ -1,7 +1,8 @@
 
-deps = common_deps + network_manager_deps + [gcr_dep, polkit_gobject_dep]
+gcr_dep = dependency('gcr-4', version: '>= 4')
+deps = common_deps + network_manager_deps + [polkit_gobject_dep, gcr_dep]
 panels_list += cappletname
-desktop = 'gnome-@0@-panel.desktop'.format(cappletname)
+desktop = 'hypr-@0@-panel.desktop'.format(cappletname)
 
 i18n.merge_file(
          type : 'desktop',

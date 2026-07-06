@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#include <colord-gtk.h>
+#include <colord.h>
 #include <colord-session/cd-session.h>
 #include <gio/gunixfdlist.h>
 #include <glib-object.h>
@@ -49,6 +49,7 @@ struct _CcColorCalibrate {
     GtkBuilder *builder;
     GtkWindow *window;
     GtkWidget *sample_widget;
+    GdkRGBA sample_color;
     guint gamma_size;
     CdProfileQuality quality;
     guint target_whitepoint; /* in Kelvin */
@@ -441,7 +442,11 @@ cc_color_calibrate_signal_cb (CcColorCalibrate *calibrate, const gchar *sender_n
         img = GTK_IMAGE (gtk_builder_get_object (calibrate->builder, "image_status"));
         gtk_widget_set_visible (GTK_WIDGET (img), FALSE);
         gtk_widget_set_visible (GTK_WIDGET (calibrate->sample_widget), TRUE);
-        cd_sample_widget_set_color (CD_SAMPLE_WIDGET (calibrate->sample_widget), &color);
+        calibrate->sample_color.red = color.R;
+        calibrate->sample_color.green = color.G;
+        calibrate->sample_color.blue = color.B;
+        calibrate->sample_color.alpha = 1.0;
+        gtk_widget_queue_draw (calibrate->sample_widget);
 
         /* for Lenovo W700 and W520 laptops we almost fullscreen the
          * sample widget as the device is actually embedded in the
@@ -791,6 +796,14 @@ cc_color_calibrate_class_init (CcColorCalibrateClass *klass)
 }
 
 static void
+sample_widget_draw (GtkDrawingArea *area, cairo_t *cr, int width, int height, void *user_data)
+{
+    CcColorCalibrate *calibrate = CC_COLOR_CALIBRATE (user_data);
+    gdk_cairo_set_source_rgba (cr, &calibrate->sample_color);
+    cairo_paint (cr);
+}
+
+static void
 cc_color_calibrate_init (CcColorCalibrate *calibrate)
 {
     g_autoptr(GError) error = NULL;
@@ -805,14 +818,20 @@ cc_color_calibrate_init (CcColorCalibrate *calibrate)
 
     /* load UI */
     calibrate->builder = gtk_builder_new ();
-    retval = gtk_builder_add_from_resource (calibrate->builder, "/org/gnome/control-center/color/cc-color-calibrate.ui",
+    retval = gtk_builder_add_from_resource (calibrate->builder, "/org/hypr/Settings/color/cc-color-calibrate.ui",
                                             &error);
     if (retval == 0)
         g_warning ("Could not load interface: %s", error->message);
 
-    /* add sample widget */
+    /* add sample widget - a simple drawing area showing the measured color */
     box = GTK_BOX (gtk_builder_get_object (calibrate->builder, "vbox_status"));
-    calibrate->sample_widget = cd_sample_widget_new ();
+    calibrate->sample_widget = gtk_drawing_area_new ();
+    calibrate->sample_color.red = 0;
+    calibrate->sample_color.green = 0;
+    calibrate->sample_color.blue = 0;
+    calibrate->sample_color.alpha = 1.0;
+    gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (calibrate->sample_widget),
+                                    sample_widget_draw, calibrate, NULL);
     gtk_widget_set_size_request (calibrate->sample_widget, 400, 400);
     gtk_box_prepend (box, calibrate->sample_widget);
     gtk_widget_set_vexpand (calibrate->sample_widget, FALSE);

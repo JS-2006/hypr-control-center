@@ -618,7 +618,7 @@ cc_enterprise_login_dialog_class_init (CcEnterpriseLoginDialogClass *klass)
     g_type_ensure (CC_TYPE_LIST_ROW);
 
     gtk_widget_class_set_template_from_resource (
-        widget_class, "/org/gnome/control-center/system/users/cc-enterprise-login-dialog.ui");
+        widget_class, "/org/hypr/Settings/system/users/cc-enterprise-login-dialog.ui");
 
     gtk_widget_class_bind_template_child (widget_class, CcEnterpriseLoginDialog, add_button);
     gtk_widget_class_bind_template_child (widget_class, CcEnterpriseLoginDialog, admin_name_row);
